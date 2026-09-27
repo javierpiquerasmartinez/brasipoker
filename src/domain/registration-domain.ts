@@ -460,8 +460,7 @@ export class RegistrationDomain {
         }
       } else {
         // Increased capacity
-        const diff = command.capacity - event.capacity;
-        let freeSeats = Math.max(0, command.capacity - occupied.length);
+        const freeSeats = Math.max(0, command.capacity - occupied.length);
         const toPromoteCount = Math.min(freeSeats, waitlist.length);
         
         if (toPromoteCount > 0) {
