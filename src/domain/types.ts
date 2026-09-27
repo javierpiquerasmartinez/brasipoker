@@ -88,6 +88,33 @@ export interface ReorderWaitlistCommand {
   newOrderRegistrationIds: string[];
 }
 
+export interface EditEventCommand {
+  eventId: string;
+  type?: EventType;
+  date?: string;
+  time?: string;
+  capacity?: number;
+  note?: string;
+  allowWaitlist?: boolean;
+}
+
+export interface CancelEventCommand {
+  eventId: string;
+}
+
+export interface EditRegistrationCommand {
+  eventId: string;
+  registrationId: string;
+  nickname?: string;
+  lateArrival?: boolean;
+  estimatedArrivalTime?: string;
+}
+
+export interface GenerateWhatsAppTextCommand {
+  eventId: string;
+}
+
+
 export interface VisibleEventState {
   event: Event;
   capacity: number;
