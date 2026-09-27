@@ -15,16 +15,21 @@ como hosting.
 ## Requisitos
 
 - Node.js 24+
-- npm 11+
+- pnpm 11+ (el repo usa pnpm como único gestor: `pnpm-lock.yaml`)
 
 ## Puesta en marcha local
 
 ```bash
-npm install
+pnpm install
 cp .env.example .env.local
 # Rellena .env.local con los valores de tu proyecto de Supabase
-npm run dev
+pnpm run dev
 ```
+
+`pnpm-workspace.yaml` aprueba el postinstall de `unrs-resolver`
+(pnpm 10+ bloquea los build scripts de dependencias hasta aprobarlos;
+sin esa aprobación, `pnpm install` falla con `ERR_PNPM_IGNORED_BUILDS`
+y ningún script llega a ejecutarse).
 
 Sin proyecto de Supabase todavía: con los placeholders de `.env.local`
 la app arranca, el login redirige correctamente y `/panel` queda
@@ -73,19 +78,19 @@ La app es instalable en pantalla de inicio (manifest + service worker
 Para regenerar los iconos (p. ej. tras cambiar diseño o colores):
 
 ```bash
-npm run icons
+pnpm run icons
 ```
 
 ## Scripts
 
 | Comando              | Descripción                                    |
 | -------------------- | ---------------------------------------------- |
-| `npm run dev`        | Servidor de desarrollo                         |
-| `npm run build`      | Build de producción                            |
-| `npm run start`      | Sirve el build de producción                   |
-| `npm run lint`       | ESLint                                         |
-| `npm run typecheck`  | Genera tipos de rutas y ejecuta `tsc --noEmit` |
-| `npm run icons`      | Regenera los iconos PWA                        |
+| `pnpm run dev`        | Servidor de desarrollo                         |
+| `pnpm run build`      | Build de producción                            |
+| `pnpm run start`      | Sirve el build de producción                   |
+| `pnpm run lint`       | ESLint                                         |
+| `pnpm run typecheck`  | Genera tipos de rutas y ejecuta `tsc --noEmit` |
+| `pnpm run icons`      | Regenera los iconos PWA                        |
 
 ## CI
 
