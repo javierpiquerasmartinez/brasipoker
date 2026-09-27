@@ -513,7 +513,7 @@ export function PublicPlayerView({ initialData }: PublicPlayerViewProps) {
                     value={myPhoneInput}
                     onChange={(e) => setMyPhoneInput(e.target.value)}
                     placeholder="612 34 56 78"
-                    className="w-full rounded-xl border border-white/15 bg-felt-950 px-4 py-2.5 text-sm text-chip placeholder-chip/30 focus:border-emerald-500 focus:outline-none"
+                    className="w-full rounded-xl border border-white/15 bg-felt-950 px-4 py-2.5 text-base sm:text-sm text-chip placeholder-chip/30 focus:border-emerald-500 focus:outline-none"
                   />
                 </div>
                 <button
@@ -539,7 +539,7 @@ export function PublicPlayerView({ initialData }: PublicPlayerViewProps) {
                     value={nickname}
                     onChange={(e) => setNickname(e.target.value)}
                     placeholder="Ej: FishPro, Dani..."
-                    className="w-full rounded-xl border border-white/15 bg-felt-950 px-4 py-2.5 text-sm text-chip placeholder-chip/30 focus:border-emerald-500 focus:outline-none"
+                    className="w-full rounded-xl border border-white/15 bg-felt-950 px-4 py-2.5 text-base sm:text-sm text-chip placeholder-chip/30 focus:border-emerald-500 focus:outline-none"
                   />
                 </div>
 
@@ -557,7 +557,7 @@ export function PublicPlayerView({ initialData }: PublicPlayerViewProps) {
                     value={phone}
                     onChange={(e) => setPhone(e.target.value)}
                     placeholder="612 34 56 78"
-                    className="w-full rounded-xl border border-white/15 bg-felt-950 px-4 py-2.5 text-sm text-chip placeholder-chip/30 focus:border-emerald-500 focus:outline-none"
+                    className="w-full rounded-xl border border-white/15 bg-felt-950 px-4 py-2.5 text-base sm:text-sm text-chip placeholder-chip/30 focus:border-emerald-500 focus:outline-none"
                   />
                 </div>
 
@@ -602,7 +602,7 @@ export function PublicPlayerView({ initialData }: PublicPlayerViewProps) {
                         required
                         value={estimatedArrivalTime}
                         onChange={(e) => setEstimatedArrivalTime(e.target.value)}
-                        className="w-full rounded-lg border border-white/15 bg-felt-900 px-3 py-2 text-sm text-chip focus:border-emerald-500 focus:outline-none"
+                        className="w-full rounded-lg border border-white/15 bg-felt-900 px-3 py-2 text-base sm:text-sm text-chip focus:border-emerald-500 focus:outline-none"
                       />
                     </div>
                   )}

@@ -3,7 +3,7 @@
 import { SpadeLogo } from "@/components/spade-logo";
 
 export const AUTH_INPUT_CLASS =
-  "rounded-lg border border-white/15 bg-black/30 px-3 py-2 text-chip placeholder:text-white/40 focus:border-felt-700 focus:outline-none focus:ring-2 focus:ring-felt-700";
+  "rounded-lg border border-white/15 bg-black/30 px-3 py-2 text-base sm:text-sm text-chip placeholder:text-white/40 focus:border-felt-700 focus:outline-none focus:ring-2 focus:ring-felt-700";
 
 export function AuthShell({
   title,

@@ -797,8 +797,8 @@ export function OrganizerDashboard({
               </div>
 
               {/* Fecha y Hora */}
-              <div className="grid grid-cols-2 gap-3">
-                <div>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <div className="min-w-0">
                   <label
                     htmlFor="create-date"
                     className="block text-xs font-semibold text-chip/70"
@@ -811,10 +811,10 @@ export function OrganizerDashboard({
                     required
                     value={newDate}
                     onChange={(e) => setNewDate(e.target.value)}
-                    className="mt-1.5 w-full rounded-xl border border-white/15 bg-felt-950 px-3 py-2.5 text-chip focus:border-emerald-400 focus:outline-none"
+                    className="mt-1.5 w-full min-w-0 rounded-xl border border-white/15 bg-felt-950 px-3 py-2.5 text-base sm:text-sm text-chip focus:border-emerald-400 focus:outline-none"
                   />
                 </div>
-                <div>
+                <div className="min-w-0">
                   <label
                     htmlFor="create-time"
                     className="block text-xs font-semibold text-chip/70"
@@ -827,7 +827,7 @@ export function OrganizerDashboard({
                     required
                     value={newTime}
                     onChange={(e) => setNewTime(e.target.value)}
-                    className="mt-1.5 w-full rounded-xl border border-white/15 bg-felt-950 px-3 py-2.5 text-chip focus:border-emerald-400 focus:outline-none"
+                    className="mt-1.5 w-full min-w-0 rounded-xl border border-white/15 bg-felt-950 px-3 py-2.5 text-base sm:text-sm text-chip focus:border-emerald-400 focus:outline-none"
                   />
                 </div>
               </div>
@@ -848,7 +848,7 @@ export function OrganizerDashboard({
                   max={200}
                   value={newCapacity}
                   onChange={(e) => setNewCapacity(Math.max(1, Number(e.target.value)))}
-                  className="mt-1.5 w-full rounded-xl border border-white/15 bg-felt-950 px-3 py-2.5 text-chip focus:border-emerald-400 focus:outline-none"
+                  className="mt-1.5 w-full rounded-xl border border-white/15 bg-felt-950 px-3 py-2.5 text-base sm:text-sm text-chip focus:border-emerald-400 focus:outline-none"
                 />
               </div>
 
@@ -866,7 +866,7 @@ export function OrganizerDashboard({
                   placeholder="ej. Ciega 1/2 € - Entrada mín 50€"
                   value={newNote}
                   onChange={(e) => setNewNote(e.target.value)}
-                  className="mt-1.5 w-full rounded-xl border border-white/15 bg-felt-950 px-3 py-2.5 text-chip placeholder-chip/30 focus:border-emerald-400 focus:outline-none"
+                  className="mt-1.5 w-full rounded-xl border border-white/15 bg-felt-950 px-3 py-2.5 text-base sm:text-sm text-chip placeholder-chip/30 focus:border-emerald-400 focus:outline-none"
                 />
               </div>
 
@@ -971,7 +971,7 @@ export function OrganizerDashboard({
                   rows={8}
                   value={whatsappText}
                   onChange={(e) => setWhatsappText(e.target.value)}
-                  className="w-full rounded-xl border border-white/15 bg-felt-950 p-3.5 text-xs font-mono text-chip/90 leading-relaxed focus:border-emerald-400 focus:outline-none"
+                  className="w-full rounded-xl border border-white/15 bg-felt-950 p-3.5 text-base sm:text-xs font-mono text-chip/90 leading-relaxed focus:border-emerald-400 focus:outline-none"
                 />
               )}
             </div>
@@ -1043,8 +1043,8 @@ export function OrganizerDashboard({
               className="mt-6 flex flex-col gap-4 text-sm"
             >
               {/* Fecha y Hora */}
-              <div className="grid grid-cols-2 gap-3">
-                <div>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <div className="min-w-0">
                   <label
                     htmlFor="edit-date"
                     className="block text-xs font-semibold text-chip/70"
@@ -1057,10 +1057,10 @@ export function OrganizerDashboard({
                     required
                     value={editDate}
                     onChange={(e) => setEditDate(e.target.value)}
-                    className="mt-1.5 w-full rounded-xl border border-white/15 bg-felt-950 px-3 py-2.5 text-chip focus:border-emerald-400 focus:outline-none"
+                    className="mt-1.5 w-full min-w-0 rounded-xl border border-white/15 bg-felt-950 px-3 py-2.5 text-base sm:text-sm text-chip focus:border-emerald-400 focus:outline-none"
                   />
                 </div>
-                <div>
+                <div className="min-w-0">
                   <label
                     htmlFor="edit-time"
                     className="block text-xs font-semibold text-chip/70"
@@ -1073,7 +1073,7 @@ export function OrganizerDashboard({
                     required
                     value={editTime}
                     onChange={(e) => setEditTime(e.target.value)}
-                    className="mt-1.5 w-full rounded-xl border border-white/15 bg-felt-950 px-3 py-2.5 text-chip focus:border-emerald-400 focus:outline-none"
+                    className="mt-1.5 w-full min-w-0 rounded-xl border border-white/15 bg-felt-950 px-3 py-2.5 text-base sm:text-sm text-chip focus:border-emerald-400 focus:outline-none"
                   />
                 </div>
               </div>
@@ -1094,7 +1094,7 @@ export function OrganizerDashboard({
                   max={200}
                   value={editCapacity}
                   onChange={(e) => setEditCapacity(Math.max(1, Number(e.target.value)))}
-                  className="mt-1.5 w-full rounded-xl border border-white/15 bg-felt-950 px-3 py-2.5 text-chip focus:border-emerald-400 focus:outline-none"
+                  className="mt-1.5 w-full rounded-xl border border-white/15 bg-felt-950 px-3 py-2.5 text-base sm:text-sm text-chip focus:border-emerald-400 focus:outline-none"
                 />
                 <span className="mt-1 block text-xs text-chip/50">
                   Si reduces el cupo, los últimos confirmados pasarán a la cabeza de
@@ -1116,7 +1116,7 @@ export function OrganizerDashboard({
                   placeholder="ej. Ciega 1/2 € - Entrada mín 50€"
                   value={editNote}
                   onChange={(e) => setEditNote(e.target.value)}
-                  className="mt-1.5 w-full rounded-xl border border-white/15 bg-felt-950 px-3 py-2.5 text-chip focus:border-emerald-400 focus:outline-none"
+                  className="mt-1.5 w-full rounded-xl border border-white/15 bg-felt-950 px-3 py-2.5 text-base sm:text-sm text-chip focus:border-emerald-400 focus:outline-none"
                 />
               </div>
 

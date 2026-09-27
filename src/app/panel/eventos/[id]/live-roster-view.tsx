@@ -1174,7 +1174,7 @@ export function LiveRosterView({ initialState }: LiveRosterViewProps) {
                   placeholder="Ej: David, El Tigre, etc."
                   value={manualNickname}
                   onChange={(e) => setManualNickname(e.target.value)}
-                  className="mt-1.5 w-full rounded-xl border border-white/15 bg-felt-950 px-3.5 py-2.5 text-sm text-chip placeholder:text-chip/30 focus:border-emerald-400 focus:outline-none"
+                  className="mt-1.5 w-full rounded-xl border border-white/15 bg-felt-950 px-3.5 py-2.5 text-base sm:text-sm text-chip placeholder:text-chip/30 focus:border-emerald-400 focus:outline-none"
                 />
               </div>
 
@@ -1189,7 +1189,7 @@ export function LiveRosterView({ initialState }: LiveRosterViewProps) {
                   placeholder="Ej: 612 34 56 78 o +34..."
                   value={manualPhone}
                   onChange={(e) => setManualPhone(e.target.value)}
-                  className="mt-1.5 w-full rounded-xl border border-white/15 bg-felt-950 px-3.5 py-2.5 text-sm font-mono text-chip placeholder:text-chip/30 focus:border-emerald-400 focus:outline-none"
+                  className="mt-1.5 w-full rounded-xl border border-white/15 bg-felt-950 px-3.5 py-2.5 text-base sm:text-sm font-mono text-chip placeholder:text-chip/30 focus:border-emerald-400 focus:outline-none"
                 />
               </div>
 
@@ -1220,7 +1220,7 @@ export function LiveRosterView({ initialState }: LiveRosterViewProps) {
                       onChange={(e) =>
                         setManualEstimatedArrivalTime(e.target.value)
                       }
-                      className="mt-1 w-full rounded-lg border border-white/15 bg-felt-950 px-3 py-2 text-xs font-mono text-chip focus:border-emerald-400 focus:outline-none"
+                      className="mt-1 w-full rounded-lg border border-white/15 bg-felt-950 px-3 py-2 text-base sm:text-xs font-mono text-chip focus:border-emerald-400 focus:outline-none"
                     />
                   </div>
                 )}
@@ -1290,7 +1290,7 @@ export function LiveRosterView({ initialState }: LiveRosterViewProps) {
                   required
                   value={editNickname}
                   onChange={(e) => setEditNickname(e.target.value)}
-                  className="mt-1.5 w-full rounded-xl border border-white/15 bg-felt-950 px-3.5 py-2.5 text-sm text-chip focus:border-emerald-400 focus:outline-none"
+                  className="mt-1.5 w-full rounded-xl border border-white/15 bg-felt-950 px-3.5 py-2.5 text-base sm:text-sm text-chip focus:border-emerald-400 focus:outline-none"
                 />
               </div>
 
@@ -1321,7 +1321,7 @@ export function LiveRosterView({ initialState }: LiveRosterViewProps) {
                       onChange={(e) =>
                         setEditEstimatedArrivalTime(e.target.value)
                       }
-                      className="mt-1 w-full rounded-lg border border-white/15 bg-felt-950 px-3 py-2 text-xs font-mono text-chip focus:border-emerald-400 focus:outline-none"
+                      className="mt-1 w-full rounded-lg border border-white/15 bg-felt-950 px-3 py-2 text-base sm:text-xs font-mono text-chip focus:border-emerald-400 focus:outline-none"
                     />
                   </div>
                 )}
@@ -1593,7 +1593,7 @@ export function LiveRosterView({ initialState }: LiveRosterViewProps) {
                   rows={8}
                   value={whatsappText}
                   onChange={(e) => setWhatsappText(e.target.value)}
-                  className="w-full rounded-xl border border-white/15 bg-felt-950 p-3.5 text-xs font-mono text-chip/90 leading-relaxed focus:border-emerald-400 focus:outline-none"
+                  className="w-full rounded-xl border border-white/15 bg-felt-950 p-3.5 text-base sm:text-xs font-mono text-chip/90 leading-relaxed focus:border-emerald-400 focus:outline-none"
                 />
               )}
             </div>
