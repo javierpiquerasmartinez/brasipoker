@@ -121,9 +121,7 @@ export class RegistrationDomain {
     }
 
     // Enters end of waitlist
-    const inWaitlist = allRegistrations
-      .filter((reg) => reg.status === 'waitlisted')
-      .sort((a, b) => (a.waitlistPosition ?? 0) - (b.waitlistPosition ?? 0));
+    const inWaitlist = this.getSortedWaitlist(allRegistrations);
 
     const position = inWaitlist.length + 1;
 
@@ -197,8 +195,10 @@ export class RegistrationDomain {
 
     let promotedRegistration: Registration | undefined;
 
-    const all = await this.repo.listRegistrationsByEvent(command.eventId);
-    const currentList = all.map((r) =>
+    const allRegistrations = await this.repo.listRegistrationsByEvent(
+      command.eventId
+    );
+    const currentList = allRegistrations.map((r) =>
       r.id === cancelledRegistration.id ? cancelledRegistration : r
     );
 
@@ -207,9 +207,7 @@ export class RegistrationDomain {
       previousStatus === 'pending_confirmation'
     ) {
       // Seat freed -> Atomic Promotion
-      const inWaitlist = currentList
-        .filter((r) => r.status === 'waitlisted')
-        .sort((a, b) => (a.waitlistPosition ?? 0) - (b.waitlistPosition ?? 0));
+      const inWaitlist = this.getSortedWaitlist(currentList);
 
       if (inWaitlist.length > 0) {
         const first = inWaitlist[0];
@@ -235,12 +233,9 @@ export class RegistrationDomain {
       }
     } else if (previousStatus === 'waitlisted') {
       // Compact waitlist
-      const inWaitlist = currentList
-        .filter(
-          (r) =>
-            r.status === 'waitlisted' && r.id !== command.registrationId
-        )
-        .sort((a, b) => (a.waitlistPosition ?? 0) - (b.waitlistPosition ?? 0));
+      const inWaitlist = this.getSortedWaitlist(
+        currentList.filter((r) => r.id !== command.registrationId)
+      );
 
       const reindexed = inWaitlist.map((reg, idx) => ({
         ...reg,
@@ -401,9 +396,7 @@ export class RegistrationDomain {
     const pendingConfirmation = registrations.filter(
       (r) => r.status === 'pending_confirmation'
     );
-    const waitlist = registrations
-      .filter((r) => r.status === 'waitlisted')
-      .sort((a, b) => (a.waitlistPosition ?? 0) - (b.waitlistPosition ?? 0));
+    const waitlist = this.getSortedWaitlist(registrations);
     const cancelled = registrations.filter((r) => r.status === 'cancelled');
 
     const occupiedSeats = confirmed.length + pendingConfirmation.length;
@@ -419,5 +412,11 @@ export class RegistrationDomain {
       waitlist,
       cancelled,
     };
+  }
+
+  private getSortedWaitlist(registrations: Registration[]): Registration[] {
+    return registrations
+      .filter((r) => r.status === 'waitlisted')
+      .sort((a, b) => (a.waitlistPosition ?? 0) - (b.waitlistPosition ?? 0));
   }
 }
