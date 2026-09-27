@@ -14,11 +14,13 @@ import {
   RegistrationResult,
   RejectPendingCommand,
   RejectResult,
+  ReorderWaitlistCommand,
   VisibleEventState,
   EditEventCommand,
   CancelEventCommand,
   EditRegistrationCommand,
   GenerateWhatsAppTextCommand,
+  Event,
 } from './types';
 
 export class RegistrationDomain {
