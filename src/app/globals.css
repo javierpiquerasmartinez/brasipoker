@@ -1,0 +1,22 @@
+@import "tailwindcss";
+
+@theme {
+  --color-felt-950: #061a11;
+  --color-felt-900: #0a3826;
+  --color-felt-800: #0f4a32;
+  --color-felt-700: #16603f;
+  --color-chip: #f2efe6;
+}
+
+body {
+  background: var(--color-felt-950);
+  color: var(--color-chip);
+  font-family:
+    system-ui,
+    -apple-system,
+    "Segoe UI",
+    Roboto,
+    "Helvetica Neue",
+    Arial,
+    sans-serif;
+}
