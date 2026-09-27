@@ -26,9 +26,11 @@ cp .env.example .env.local
 npm run dev
 ```
 
-Sin proyecto de Supabase todavía, la app arranca y el login redirige
-correctamente, pero el registro/entrada fallará hasta rellenar
-`.env.local`.
+Sin proyecto de Supabase todavía: con los placeholders de `.env.local`
+la app arranca, el login redirige correctamente y `/panel` queda
+protegido; el registro/entrada dará error hasta rellenar valores
+reales. Sin `.env.local` la app no arranca (fallo explícito de
+configuración).
 
 ## Crear el proyecto de Supabase
 
