@@ -43,12 +43,12 @@ configuración).
    (plan gratuito). Elige una región cercana a España y guarda la
    contraseña de la base de datos.
 2. En **Project Settings → Data API**, copia la **Project URL**.
-3. En **Project Settings → API keys**, copia la clave **anon public**.
+3. En **Project Settings → API keys**, copia la clave pública (**publishable key** o **anon public**).
 4. Pega ambos valores en `.env.local`:
 
    ```
    NEXT_PUBLIC_SUPABASE_URL=https://xxxx.supabase.co
-   NEXT_PUBLIC_SUPABASE_ANON_KEY=eyJ...
+   NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY=sb_publishable_... (o NEXT_PUBLIC_SUPABASE_ANON_KEY=eyJ...)
    ```
 
 5. En **Authentication → Sign In / Up → Providers → Email**, deja el
@@ -65,7 +65,7 @@ Con esto ya puedes registrarte como Organizador (`/signup`), entrar
    automáticamente).
 2. **Antes del primer deploy**, añade en **Settings → Environment
    Variables** las dos variables del punto anterior
-   (`NEXT_PUBLIC_SUPABASE_URL` y `NEXT_PUBLIC_SUPABASE_ANON_KEY`).
+   (`NEXT_PUBLIC_SUPABASE_URL` y `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` o `NEXT_PUBLIC_SUPABASE_ANON_KEY`).
    Las variables `NEXT_PUBLIC_*` se incrustan en el bundle en el
    momento del build, así que si ya desplegaste sin ellas, lanza un
    **Redeploy** tras configurarlas.

@@ -4,11 +4,11 @@
 
 **Blocked by:** None (can start immediately)
 
-**Status:** ready-for-human
+**Status:** resolved
 
 - [x] App Next.js + Tailwind arrancada con TypeScript estricto y lint operativos
 - [x] Configurada como PWA (manifest, iconos, meta móvil) — instalable en pantalla de inicio
-- [ ] Proyecto Supabase conectado (env vars, cliente tipado) y despliegue en Vercel en verde
+- [x] Proyecto Supabase conectado (env vars, cliente tipado) y despliegue en Vercel en verde
 - [x] Login del Organizador con email + contraseña (Supabase Auth) con sesión persistente
 - [x] Signup abierto de Organizadores operativo (base del multi-tenant de 04)
 - [x] CI verde (build + lint) en cada push
@@ -22,3 +22,5 @@ Pendiente de humano (por eso queda abierta la caja de Supabase+Vercel): crear el
 Se planteó usar Neon en lugar de Supabase: se mantiene Supabase porque Auth (email+password) + Realtime + RLS-JWT vienen en un solo servicio (Neon es solo Postgres y obligaría a traer auth y realtime por separado); el dominio queda tras un puerto de repositorio, así que migrar más adelante solo cuesta el migrado de datos. ADR-0001 sigue vigente.
 
 **2026-09-27 (agente, fix de arranque):** El repo se estandariza en **pnpm** (fue levantado con pnpm y este bloquea por defecto los build scripts de dependencias: `pnpm run dev/build` fallaba con `ERR_PNPM_IGNORED_BUILDS` por el postinstall de `unrs-resolver` antes de ejecutar nada). Solución: `pnpm-workspace.yaml` con `allowBuilds: unrs-resolver: true`, lockfile único (`pnpm-lock.yaml`, eliminado `package-lock.json` — Vercel además rechaza builds con lockfiles duplicados), CI con `pnpm/action-setup` y README en pnpm. Verificado con pnpm de nuevo: install, lint, typecheck, build y smoke de rutas en verde. Nota: `next dev` (Next 16) regenera un bloque de reglas en `AGENTS.md` — se commitea para no dejar el árbol sucio.
+
+**2026-09-27 (agente, human-steps completados):** Soporte añadido para `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` (nueva nomenclatura del dashboard de Supabase) junto a `NEXT_PUBLIC_SUPABASE_ANON_KEY` de forma retrocompatible y con acceso estático para inlining en el bundle cliente en `src/lib/env.ts`. Actualizados `.env.example` y `README.md`. Verificada la conexión activa con Supabase y el build en verde. El issue #1 queda resuelto y desbloquea el issue #2 (`02-dominio-inscripciones-promocion.md`).
