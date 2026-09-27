@@ -39,6 +39,9 @@ export function OrganizerDashboard({
     useState<OrganizerEventCardData | null>(null);
   const [shareEventData, setShareEventData] =
     useState<OrganizerEventCardData | null>(null);
+  const [expandedRosters, setExpandedRosters] = useState<
+    Record<string, boolean>
+  >({});
 
   // WhatsApp share modal state
   const [whatsappText, setWhatsappText] = useState<string>("");
@@ -186,6 +189,12 @@ export function OrganizerDashboard({
         pendingCount: 0,
         waitlistCount: 0,
         visualCycle: "upcoming",
+        roster: {
+          confirmed: [],
+          pendingConfirmation: [],
+          waitlist: [],
+          cancelled: [],
+        },
       });
     });
   };
@@ -512,6 +521,157 @@ export function OrganizerDashboard({
                         style={{ width: `${percent}%` }}
                       />
                     </div>
+                  </div>
+
+                  {/* Roster expansion toggle */}
+                  <div className="mt-4 border-t border-white/5 pt-3">
+                    <button
+                      type="button"
+                      onClick={() =>
+                        setExpandedRosters((prev) => ({
+                          ...prev,
+                          [event.id]: !prev[event.id],
+                        }))
+                      }
+                      className="flex w-full items-center justify-between rounded-xl border border-white/10 bg-white/[0.03] px-3 py-2 text-xs font-semibold text-chip/80 transition-colors hover:bg-white/[0.07] hover:text-chip"
+                    >
+                      <span className="flex items-center gap-1.5">
+                        <span>👥 Roster de Jugadores</span>
+                        <span className="rounded-full bg-emerald-500/20 px-2 py-0.5 text-[11px] font-bold text-emerald-300">
+                          {(event.roster?.confirmed?.length ?? 0) +
+                            (event.roster?.pendingConfirmation?.length ?? 0)}
+                          {event.roster?.waitlist?.length
+                            ? ` + ${event.roster.waitlist.length} cola`
+                            : ""}
+                        </span>
+                      </span>
+                      <span className="text-[11px] text-chip/60">
+                        {expandedRosters[event.id] ? "▲ Ocultar" : "▼ Ver completo"}
+                      </span>
+                    </button>
+
+                    {/* Expanded Roster Details */}
+                    {expandedRosters[event.id] && (
+                      <div className="mt-3 space-y-3 rounded-2xl border border-white/10 bg-felt-950/80 p-3.5 text-xs animate-in fade-in duration-200">
+                        {/* Confirmados & Pendientes */}
+                        <div>
+                          <p className="font-bold text-emerald-400 uppercase tracking-wider text-[10px]">
+                            Confirmados (
+                            {(event.roster?.confirmed?.length ?? 0) +
+                              (event.roster?.pendingConfirmation?.length ?? 0)}
+                            )
+                          </p>
+                          {(event.roster?.confirmed?.length ?? 0) +
+                            (event.roster?.pendingConfirmation?.length ?? 0) ===
+                          0 ? (
+                            <p className="mt-1 text-chip/40 italic text-[11px]">
+                              Sin jugadores confirmados
+                            </p>
+                          ) : (
+                            <ul className="mt-1.5 divide-y divide-white/5">
+                              {event.roster?.confirmed?.map((p) => (
+                                <li
+                                  key={p.id}
+                                  className="flex items-center justify-between py-1 text-chip/90"
+                                >
+                                  <span className="font-medium">
+                                    {p.nickname}
+                                  </span>
+                                  <div className="flex items-center gap-2 text-[11px] text-chip/60 font-mono">
+                                    {p.lateArrival && (
+                                      <span className="text-sky-300">
+                                        ⏰ {p.estimatedArrivalTime}
+                                      </span>
+                                    )}
+                                    <span>📞 {p.phone}</span>
+                                  </div>
+                                </li>
+                              ))}
+                              {event.roster?.pendingConfirmation?.map((p) => (
+                                <li
+                                  key={p.id}
+                                  className="flex items-center justify-between py-1 text-amber-300"
+                                >
+                                  <span className="font-medium">
+                                    {p.nickname} (⚠️ Pendiente)
+                                  </span>
+                                  <div className="flex items-center gap-2 text-[11px] font-mono">
+                                    {p.lateArrival && (
+                                      <span className="text-sky-300">
+                                        ⏰ {p.estimatedArrivalTime}
+                                      </span>
+                                    )}
+                                    <span>📞 {p.phone}</span>
+                                  </div>
+                                </li>
+                              ))}
+                            </ul>
+                          )}
+                        </div>
+
+                        {/* Waitlist */}
+                        {(event.roster?.waitlist?.length ?? 0) > 0 && (
+                          <div className="border-t border-white/10 pt-2">
+                            <p className="font-bold text-amber-400 uppercase tracking-wider text-[10px]">
+                              Lista de Espera ({event.roster?.waitlist?.length})
+                            </p>
+                            <ul className="mt-1.5 divide-y divide-white/5">
+                              {event.roster?.waitlist?.map((p) => (
+                                <li
+                                  key={p.id}
+                                  className="flex items-center justify-between py-1 text-chip/80"
+                                >
+                                  <span>
+                                    <strong className="text-amber-300 mr-1.5">
+                                      #{p.waitlistPosition}
+                                    </strong>
+                                    {p.nickname}
+                                  </span>
+                                  <span className="text-[11px] text-chip/60 font-mono">
+                                    📞 {p.phone}
+                                  </span>
+                                </li>
+                              ))}
+                            </ul>
+                          </div>
+                        )}
+
+                        {/* Cancelled */}
+                        {(event.roster?.cancelled?.length ?? 0) > 0 && (
+                          <div className="border-t border-white/10 pt-2">
+                            <p className="font-bold text-red-400/80 uppercase tracking-wider text-[10px]">
+                              Cancelados ({event.roster?.cancelled?.length})
+                            </p>
+                            <ul className="mt-1.5 divide-y divide-white/5 text-[11px]">
+                              {event.roster?.cancelled?.map((p) => (
+                                <li
+                                  key={p.id}
+                                  className="flex items-center justify-between py-1 text-chip/50"
+                                >
+                                  <span className="line-through">
+                                    {p.nickname}
+                                  </span>
+                                  <span>
+                                    {p.cancelledBy === "organizer"
+                                      ? "🛡️ Org"
+                                      : "👤 Jugador"}
+                                  </span>
+                                </li>
+                              ))}
+                            </ul>
+                          </div>
+                        )}
+
+                        <div className="pt-1 text-right">
+                          <Link
+                            href={`/panel/eventos/${event.id}`}
+                            className="text-[11px] font-bold text-emerald-400 hover:text-emerald-300 hover:underline"
+                          >
+                            Gestionar en vivo ➔
+                          </Link>
+                        </div>
+                      </div>
+                    )}
                   </div>
                 </div>
 

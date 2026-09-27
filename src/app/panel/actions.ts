@@ -8,18 +8,29 @@ import {
   createOrganizerActionsHandler,
   CreateEventInput,
   EditEventInput,
+  ManualRegisterInput,
+  EditRegistrationInput,
   CreateEventActionResult,
   EditEventActionResult,
   CancelEventActionResult,
   GetOrganizerEventsActionResult,
   GetWhatsAppTextActionResult,
   GetEventLiveStateActionResult,
+  ConfirmPendingActionResult,
+  RejectPendingActionResult,
+  ManualRegisterActionResult,
+  ReorderWaitlistActionResult,
+  EditRegistrationActionResult,
+  CancelRegistrationActionResult,
+  UpdateCapacityActionResult,
   OrganizerEventCardData,
 } from "./actions-handler";
 
 export type {
   CreateEventInput,
   EditEventInput,
+  ManualRegisterInput,
+  EditRegistrationInput,
   OrganizerEventCardData,
   CreateEventActionResult,
   EditEventActionResult,
@@ -27,6 +38,13 @@ export type {
   GetOrganizerEventsActionResult,
   GetWhatsAppTextActionResult,
   GetEventLiveStateActionResult,
+  ConfirmPendingActionResult,
+  RejectPendingActionResult,
+  ManualRegisterActionResult,
+  ReorderWaitlistActionResult,
+  EditRegistrationActionResult,
+  CancelRegistrationActionResult,
+  UpdateCapacityActionResult,
 };
 
 export type SeedEventResult =
@@ -130,3 +148,97 @@ export async function seedTestEventAction(): Promise<SeedEventResult> {
 
   return { success: false, error: res.error };
 }
+
+export async function confirmPendingAction(
+  eventId: string,
+  registrationId: string
+): Promise<ConfirmPendingActionResult> {
+  const handler = await getHandler();
+  const res = await handler.confirmPending(eventId, registrationId);
+  if (res.success) {
+    revalidatePath("/panel");
+    revalidatePath(`/panel/eventos/${eventId}`);
+  }
+  return res;
+}
+
+export async function rejectPendingAction(
+  eventId: string,
+  registrationId: string
+): Promise<RejectPendingActionResult> {
+  const handler = await getHandler();
+  const res = await handler.rejectPending(eventId, registrationId);
+  if (res.success) {
+    revalidatePath("/panel");
+    revalidatePath(`/panel/eventos/${eventId}`);
+  }
+  return res;
+}
+
+export async function manualRegisterAction(
+  eventId: string,
+  input: ManualRegisterInput
+): Promise<ManualRegisterActionResult> {
+  const handler = await getHandler();
+  const res = await handler.manualRegister(eventId, input);
+  if (res.success) {
+    revalidatePath("/panel");
+    revalidatePath(`/panel/eventos/${eventId}`);
+  }
+  return res;
+}
+
+export async function reorderWaitlistAction(
+  eventId: string,
+  newOrderRegistrationIds: string[]
+): Promise<ReorderWaitlistActionResult> {
+  const handler = await getHandler();
+  const res = await handler.reorderWaitlist(eventId, newOrderRegistrationIds);
+  if (res.success) {
+    revalidatePath("/panel");
+    revalidatePath(`/panel/eventos/${eventId}`);
+  }
+  return res;
+}
+
+export async function editRegistrationAction(
+  eventId: string,
+  registrationId: string,
+  input: EditRegistrationInput
+): Promise<EditRegistrationActionResult> {
+  const handler = await getHandler();
+  const res = await handler.editRegistration(eventId, registrationId, input);
+  if (res.success) {
+    revalidatePath("/panel");
+    revalidatePath(`/panel/eventos/${eventId}`);
+  }
+  return res;
+}
+
+export async function cancelRegistrationAction(
+  eventId: string,
+  registrationId: string
+): Promise<CancelRegistrationActionResult> {
+  const handler = await getHandler();
+  const res = await handler.cancelRegistration(eventId, registrationId);
+  if (res.success) {
+    revalidatePath("/panel");
+    revalidatePath(`/panel/eventos/${eventId}`);
+  }
+  return res;
+}
+
+export async function updateCapacityAction(
+  eventId: string,
+  capacity: number
+): Promise<UpdateCapacityActionResult> {
+  const handler = await getHandler();
+  const res = await handler.updateCapacity(eventId, capacity);
+  if (res.success) {
+    revalidatePath("/panel");
+    revalidatePath(`/panel/eventos/${eventId}`);
+    revalidatePath(`/p/${res.event.slug}`);
+  }
+  return res;
+}
+
