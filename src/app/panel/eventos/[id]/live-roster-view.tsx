@@ -448,7 +448,7 @@ export function LiveRosterView({ initialState }: LiveRosterViewProps) {
           <button
             type="button"
             onClick={() => setFeedback(null)}
-            className="text-xs opacity-70 hover:opacity-100 p-1"
+            className="text-xs opacity-70 hover:opacity-100 p-1 cursor-pointer"
           >
             ✕
           </button>
@@ -459,7 +459,7 @@ export function LiveRosterView({ initialState }: LiveRosterViewProps) {
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <Link
           href="/panel"
-          className="inline-flex items-center gap-2 text-sm font-semibold text-chip/70 transition-colors hover:text-chip"
+          className="inline-flex items-center gap-2 text-sm font-semibold text-chip/70 transition-colors hover:text-chip cursor-pointer"
         >
           <svg
             className="h-4 w-4"
@@ -496,7 +496,7 @@ export function LiveRosterView({ initialState }: LiveRosterViewProps) {
             type="button"
             onClick={reloadState}
             disabled={isPending}
-            className="rounded-lg border border-white/10 bg-white/5 p-1.5 text-xs text-chip/70 hover:bg-white/10 hover:text-chip disabled:opacity-50"
+            className="rounded-lg border border-white/10 bg-white/5 p-1.5 text-xs text-chip/70 hover:bg-white/10 hover:text-chip disabled:opacity-50 cursor-pointer"
             title="Refrescar datos"
           >
             <svg
@@ -540,7 +540,7 @@ export function LiveRosterView({ initialState }: LiveRosterViewProps) {
                 id="btn-alta-manual"
                 type="button"
                 onClick={() => setManualModalOpen(true)}
-                className="inline-flex items-center gap-1.5 rounded-xl border border-emerald-500/50 bg-emerald-500/20 px-3.5 py-2 text-xs font-bold text-emerald-300 shadow transition-all hover:bg-emerald-500/30"
+                className="inline-flex items-center gap-1.5 rounded-xl border border-emerald-500/50 bg-emerald-500/20 px-3.5 py-2 text-xs font-bold text-emerald-300 shadow transition-all hover:bg-emerald-500/30 cursor-pointer"
               >
                 <span>➕</span>
                 <span>Alta manual</span>
@@ -550,7 +550,7 @@ export function LiveRosterView({ initialState }: LiveRosterViewProps) {
             <button
               type="button"
               onClick={handleOpenShare}
-              className="inline-flex items-center gap-1.5 rounded-xl bg-emerald-600 px-3.5 py-2 text-xs font-semibold text-white shadow transition-colors hover:bg-emerald-500"
+              className="inline-flex items-center gap-1.5 rounded-xl bg-emerald-600 px-3.5 py-2 text-xs font-semibold text-white shadow transition-colors hover:bg-emerald-500 cursor-pointer"
             >
               <span>💬</span>
               <span>Difundir (WhatsApp)</span>
@@ -559,7 +559,7 @@ export function LiveRosterView({ initialState }: LiveRosterViewProps) {
             <Link
               href={`/p/${event.slug}`}
               target="_blank"
-              className="inline-flex items-center gap-1.5 rounded-xl border border-white/15 bg-white/5 px-3 py-2 text-xs font-semibold text-chip transition-colors hover:bg-white/10"
+              className="inline-flex items-center gap-1.5 rounded-xl border border-white/15 bg-white/5 px-3 py-2 text-xs font-semibold text-chip transition-colors hover:bg-white/10 cursor-pointer"
             >
               <span>🔗</span>
               <span>Vista Jugador</span>
@@ -641,7 +641,7 @@ export function LiveRosterView({ initialState }: LiveRosterViewProps) {
                       }
                     }}
                     disabled={capacity <= 1 || isPending}
-                    className="flex h-8 w-8 items-center justify-center rounded-lg bg-white/5 text-sm font-bold text-chip hover:bg-white/15 disabled:opacity-30"
+                    className="flex h-8 w-8 items-center justify-center rounded-lg bg-white/5 text-sm font-bold text-chip hover:bg-white/15 disabled:opacity-30 cursor-pointer"
                     title="Reducir cupo"
                   >
                     −
@@ -654,7 +654,7 @@ export function LiveRosterView({ initialState }: LiveRosterViewProps) {
                     type="button"
                     onClick={() => handleUpdateCapacitySubmit(capacity + 1)}
                     disabled={isPending}
-                    className="flex h-8 w-8 items-center justify-center rounded-lg bg-white/5 text-sm font-bold text-chip hover:bg-white/15 disabled:opacity-30"
+                    className="flex h-8 w-8 items-center justify-center rounded-lg bg-white/5 text-sm font-bold text-chip hover:bg-white/15 disabled:opacity-30 cursor-pointer"
                     title="Ampliar cupo"
                   >
                     +
@@ -668,7 +668,7 @@ export function LiveRosterView({ initialState }: LiveRosterViewProps) {
                     setNewCapacityInput(capacity);
                     setCapacityModalOpen(true);
                   }}
-                  className="rounded-xl border border-white/15 bg-white/5 px-3 py-1.5 text-xs font-semibold text-chip hover:bg-white/10"
+                  className="rounded-xl border border-white/15 bg-white/5 px-3 py-1.5 text-xs font-semibold text-chip hover:bg-white/10 cursor-pointer"
                 >
                   ⚙️ Ajustar
                 </button>
@@ -718,7 +718,7 @@ export function LiveRosterView({ initialState }: LiveRosterViewProps) {
               <button
                 type="button"
                 onClick={() => setManualModalOpen(true)}
-                className="text-xs font-semibold text-emerald-400 underline underline-offset-4 hover:text-emerald-300"
+                className="text-xs font-semibold text-emerald-400 underline underline-offset-4 hover:text-emerald-300 cursor-pointer"
               >
                 + Dar de alta manualmente a un jugador
               </button>
@@ -726,7 +726,7 @@ export function LiveRosterView({ initialState }: LiveRosterViewProps) {
               <button
                 type="button"
                 onClick={handleOpenShare}
-                className="text-xs font-semibold text-chip/70 underline underline-offset-4 hover:text-chip"
+                className="text-xs font-semibold text-chip/70 underline underline-offset-4 hover:text-chip cursor-pointer"
               >
                 Compartir por WhatsApp
               </button>
@@ -824,7 +824,7 @@ export function LiveRosterView({ initialState }: LiveRosterViewProps) {
                           type="button"
                           onClick={() => handleConfirmPending(reg.id)}
                           disabled={isPending}
-                          className="inline-flex items-center gap-1 rounded-lg border border-emerald-500/50 bg-emerald-600 px-3 py-1.5 text-xs font-bold text-white shadow hover:bg-emerald-500 active:scale-95 disabled:opacity-50"
+                          className="inline-flex items-center gap-1 rounded-lg border border-emerald-500/50 bg-emerald-600 px-3 py-1.5 text-xs font-bold text-white shadow hover:bg-emerald-500 active:scale-95 disabled:opacity-50 cursor-pointer"
                         >
                           <span>✓ Confirmar</span>
                         </button>
@@ -834,7 +834,7 @@ export function LiveRosterView({ initialState }: LiveRosterViewProps) {
                           type="button"
                           onClick={() => setRejectingRegistration(reg)}
                           disabled={isPending}
-                          className="inline-flex items-center gap-1 rounded-lg border border-red-500/50 bg-red-950/80 px-2.5 py-1.5 text-xs font-bold text-red-300 hover:bg-red-900 active:scale-95 disabled:opacity-50"
+                          className="inline-flex items-center gap-1 rounded-lg border border-red-500/50 bg-red-950/80 px-2.5 py-1.5 text-xs font-bold text-red-300 hover:bg-red-900 active:scale-95 disabled:opacity-50 cursor-pointer"
                         >
                           <span>✕ Rechazar</span>
                         </button>
@@ -847,7 +847,7 @@ export function LiveRosterView({ initialState }: LiveRosterViewProps) {
                           id={`btn-edit-${reg.id}`}
                           type="button"
                           onClick={() => handleOpenEdit(reg)}
-                          className="rounded-lg border border-white/10 bg-white/5 px-2.5 py-1.5 text-xs font-medium text-chip/80 hover:bg-white/10 hover:text-chip"
+                          className="rounded-lg border border-white/10 bg-white/5 px-2.5 py-1.5 text-xs font-medium text-chip/80 hover:bg-white/10 hover:text-chip cursor-pointer"
                           title="Editar inscripción"
                         >
                           ✏️ Editar
@@ -857,7 +857,7 @@ export function LiveRosterView({ initialState }: LiveRosterViewProps) {
                           id={`btn-cancel-${reg.id}`}
                           type="button"
                           onClick={() => setCancellingRegistration(reg)}
-                          className="rounded-lg border border-red-500/20 bg-red-950/40 px-2.5 py-1.5 text-xs font-medium text-red-300/90 hover:bg-red-900/60 hover:text-red-200"
+                          className="rounded-lg border border-red-500/20 bg-red-950/40 px-2.5 py-1.5 text-xs font-medium text-red-300/90 hover:bg-red-900/60 hover:text-red-200 cursor-pointer"
                           title="Dar de baja / Cancelar"
                         >
                           🚫 Baja
@@ -1004,7 +1004,7 @@ export function LiveRosterView({ initialState }: LiveRosterViewProps) {
                           type="button"
                           onClick={() => handleMoveWaitlist(index, "up")}
                           disabled={isFirst || isPending}
-                          className="px-2 py-1 text-xs text-chip/70 hover:text-chip disabled:opacity-20"
+                          className="px-2 py-1 text-xs text-chip/70 hover:text-chip disabled:opacity-20 cursor-pointer"
                           title="Subir posición"
                         >
                           ▲
@@ -1014,7 +1014,7 @@ export function LiveRosterView({ initialState }: LiveRosterViewProps) {
                           type="button"
                           onClick={() => handleMoveWaitlist(index, "down")}
                           disabled={isLast || isPending}
-                          className="px-2 py-1 text-xs text-chip/70 hover:text-chip disabled:opacity-20"
+                          className="px-2 py-1 text-xs text-chip/70 hover:text-chip disabled:opacity-20 cursor-pointer"
                           title="Bajar posición"
                         >
                           ▼
@@ -1028,7 +1028,7 @@ export function LiveRosterView({ initialState }: LiveRosterViewProps) {
                           id={`btn-edit-waitlist-${reg.id}`}
                           type="button"
                           onClick={() => handleOpenEdit(reg)}
-                          className="rounded-lg border border-white/10 bg-white/5 px-2.5 py-1.5 text-xs font-medium text-chip/80 hover:bg-white/10 hover:text-chip"
+                          className="rounded-lg border border-white/10 bg-white/5 px-2.5 py-1.5 text-xs font-medium text-chip/80 hover:bg-white/10 hover:text-chip cursor-pointer"
                           title="Editar inscripción"
                         >
                           ✏️
@@ -1038,7 +1038,7 @@ export function LiveRosterView({ initialState }: LiveRosterViewProps) {
                           id={`btn-cancel-waitlist-${reg.id}`}
                           type="button"
                           onClick={() => setCancellingRegistration(reg)}
-                          className="rounded-lg border border-red-500/20 bg-red-950/40 px-2.5 py-1.5 text-xs font-medium text-red-300/90 hover:bg-red-900/60 hover:text-red-200"
+                          className="rounded-lg border border-red-500/20 bg-red-950/40 px-2.5 py-1.5 text-xs font-medium text-red-300/90 hover:bg-red-900/60 hover:text-red-200 cursor-pointer"
                           title="Dar de baja de la lista de espera"
                         >
                           🚫
@@ -1150,7 +1150,7 @@ export function LiveRosterView({ initialState }: LiveRosterViewProps) {
               <button
                 type="button"
                 onClick={() => setManualModalOpen(false)}
-                className="text-chip/60 hover:text-chip p-1"
+                className="text-chip/60 hover:text-chip p-1 cursor-pointer"
               >
                 ✕
               </button>
@@ -1200,7 +1200,7 @@ export function LiveRosterView({ initialState }: LiveRosterViewProps) {
                     type="checkbox"
                     checked={manualLateArrival}
                     onChange={(e) => setManualLateArrival(e.target.checked)}
-                    className="h-4 w-4 rounded border-white/20 bg-felt-950 text-emerald-500 focus:ring-emerald-400"
+                    className="h-4 w-4 rounded border-white/20 bg-felt-950 text-emerald-500 focus:ring-emerald-400 cursor-pointer"
                   />
                   <span className="text-xs font-medium text-chip">
                     ⏰ Llegará tarde a la partida
@@ -1230,7 +1230,7 @@ export function LiveRosterView({ initialState }: LiveRosterViewProps) {
                 <button
                   type="button"
                   onClick={() => setManualModalOpen(false)}
-                  className="rounded-xl px-4 py-2 text-xs font-semibold text-chip/70 hover:text-chip"
+                  className="rounded-xl px-4 py-2 text-xs font-semibold text-chip/70 hover:text-chip cursor-pointer"
                 >
                   Cancelar
                 </button>
@@ -1239,7 +1239,7 @@ export function LiveRosterView({ initialState }: LiveRosterViewProps) {
                   id="btn-submit-manual-register"
                   type="submit"
                   disabled={isPending}
-                  className="rounded-xl bg-emerald-600 px-5 py-2.5 text-xs font-bold text-white shadow hover:bg-emerald-500 disabled:opacity-50 active:scale-95 transition-all"
+                  className="rounded-xl bg-emerald-600 px-5 py-2.5 text-xs font-bold text-white shadow hover:bg-emerald-500 disabled:opacity-50 active:scale-95 transition-all cursor-pointer"
                 >
                   {isPending ? "Añadiendo..." : "Inscribir Jugador"}
                 </button>
@@ -1267,7 +1267,7 @@ export function LiveRosterView({ initialState }: LiveRosterViewProps) {
               <button
                 type="button"
                 onClick={() => setEditingRegistration(null)}
-                className="text-chip/60 hover:text-chip p-1"
+                className="text-chip/60 hover:text-chip p-1 cursor-pointer"
               >
                 ✕
               </button>
@@ -1301,7 +1301,7 @@ export function LiveRosterView({ initialState }: LiveRosterViewProps) {
                     type="checkbox"
                     checked={editLateArrival}
                     onChange={(e) => setEditLateArrival(e.target.checked)}
-                    className="h-4 w-4 rounded border-white/20 bg-felt-950 text-emerald-500 focus:ring-emerald-400"
+                    className="h-4 w-4 rounded border-white/20 bg-felt-950 text-emerald-500 focus:ring-emerald-400 cursor-pointer"
                   />
                   <span className="text-xs font-medium text-chip">
                     ⏰ Llegada tardía
@@ -1331,7 +1331,7 @@ export function LiveRosterView({ initialState }: LiveRosterViewProps) {
                 <button
                   type="button"
                   onClick={() => setEditingRegistration(null)}
-                  className="rounded-xl px-4 py-2 text-xs font-semibold text-chip/70 hover:text-chip"
+                  className="rounded-xl px-4 py-2 text-xs font-semibold text-chip/70 hover:text-chip cursor-pointer"
                 >
                   Cancelar
                 </button>
@@ -1340,7 +1340,7 @@ export function LiveRosterView({ initialState }: LiveRosterViewProps) {
                   id="btn-submit-edit-registration"
                   type="submit"
                   disabled={isPending}
-                  className="rounded-xl bg-emerald-600 px-5 py-2.5 text-xs font-bold text-white shadow hover:bg-emerald-500 disabled:opacity-50"
+                  className="rounded-xl bg-emerald-600 px-5 py-2.5 text-xs font-bold text-white shadow hover:bg-emerald-500 disabled:opacity-50 cursor-pointer"
                 >
                   {isPending ? "Guardando..." : "Guardar Cambios"}
                 </button>
@@ -1375,7 +1375,7 @@ export function LiveRosterView({ initialState }: LiveRosterViewProps) {
               <button
                 type="button"
                 onClick={() => setCancellingRegistration(null)}
-                className="rounded-xl px-4 py-2 text-xs font-semibold text-chip/70 hover:text-chip"
+                className="rounded-xl px-4 py-2 text-xs font-semibold text-chip/70 hover:text-chip cursor-pointer"
               >
                 Volver
               </button>
@@ -1384,7 +1384,7 @@ export function LiveRosterView({ initialState }: LiveRosterViewProps) {
                 type="button"
                 onClick={handleCancelRegistrationConfirm}
                 disabled={isPending}
-                className="rounded-xl bg-red-600 px-5 py-2.5 text-xs font-bold text-white shadow hover:bg-red-500 disabled:opacity-50"
+                className="rounded-xl bg-red-600 px-5 py-2.5 text-xs font-bold text-white shadow hover:bg-red-500 disabled:opacity-50 cursor-pointer"
               >
                 {isPending ? "Cancelando..." : "Confirmar Baja"}
               </button>
@@ -1412,7 +1412,7 @@ export function LiveRosterView({ initialState }: LiveRosterViewProps) {
               <button
                 type="button"
                 onClick={() => setRejectingRegistration(null)}
-                className="rounded-xl px-4 py-2 text-xs font-semibold text-chip/70 hover:text-chip"
+                className="rounded-xl px-4 py-2 text-xs font-semibold text-chip/70 hover:text-chip cursor-pointer"
               >
                 Volver
               </button>
@@ -1421,7 +1421,7 @@ export function LiveRosterView({ initialState }: LiveRosterViewProps) {
                 type="button"
                 onClick={handleRejectPendingConfirm}
                 disabled={isPending}
-                className="rounded-xl bg-red-600 px-5 py-2.5 text-xs font-bold text-white shadow hover:bg-red-500 disabled:opacity-50"
+                className="rounded-xl bg-red-600 px-5 py-2.5 text-xs font-bold text-white shadow hover:bg-red-500 disabled:opacity-50 cursor-pointer"
               >
                 {isPending ? "Rechazando..." : "Rechazar y Promocionar Siguiente"}
               </button>
@@ -1448,7 +1448,7 @@ export function LiveRosterView({ initialState }: LiveRosterViewProps) {
               <button
                 type="button"
                 onClick={() => setCapacityModalOpen(false)}
-                className="text-chip/60 hover:text-chip p-1"
+                className="text-chip/60 hover:text-chip p-1 cursor-pointer"
               >
                 ✕
               </button>
@@ -1512,7 +1512,7 @@ export function LiveRosterView({ initialState }: LiveRosterViewProps) {
                 <button
                   type="button"
                   onClick={() => setCapacityModalOpen(false)}
-                  className="rounded-xl px-4 py-2 text-xs font-semibold text-chip/70 hover:text-chip"
+                  className="rounded-xl px-4 py-2 text-xs font-semibold text-chip/70 hover:text-chip cursor-pointer"
                 >
                   Cancelar
                 </button>
@@ -1521,7 +1521,7 @@ export function LiveRosterView({ initialState }: LiveRosterViewProps) {
                   type="button"
                   onClick={() => handleUpdateCapacitySubmit(newCapacityInput)}
                   disabled={isPending}
-                  className="rounded-xl bg-emerald-600 px-5 py-2.5 text-xs font-bold text-white shadow hover:bg-emerald-500 disabled:opacity-50"
+                  className="rounded-xl bg-emerald-600 px-5 py-2.5 text-xs font-bold text-white shadow hover:bg-emerald-500 disabled:opacity-50 cursor-pointer"
                 >
                   {isPending ? "Actualizando..." : "Guardar Cupo"}
                 </button>
@@ -1549,7 +1549,7 @@ export function LiveRosterView({ initialState }: LiveRosterViewProps) {
               <button
                 type="button"
                 onClick={() => setShareModalOpen(false)}
-                className="text-chip/60 hover:text-chip p-1"
+                className="text-chip/60 hover:text-chip p-1 cursor-pointer"
               >
                 ✕
               </button>
@@ -1568,7 +1568,7 @@ export function LiveRosterView({ initialState }: LiveRosterViewProps) {
               <button
                 type="button"
                 onClick={handleCopyLink}
-                className="shrink-0 rounded-xl bg-white/10 px-3.5 py-2 text-xs font-semibold text-chip transition-colors hover:bg-white/20 active:scale-95"
+                className="shrink-0 rounded-xl bg-white/10 px-3.5 py-2 text-xs font-semibold text-chip transition-colors hover:bg-white/20 active:scale-95 cursor-pointer"
               >
                 {copiedLink ? "¡Copiado! ✓" : "Copiar"}
               </button>
@@ -1602,7 +1602,7 @@ export function LiveRosterView({ initialState }: LiveRosterViewProps) {
               <button
                 type="button"
                 onClick={handleCopyMessage}
-                className="flex-1 inline-flex items-center justify-center gap-2 rounded-xl bg-white/15 px-4 py-3 text-sm font-semibold text-chip transition-all hover:bg-white/20 active:scale-95"
+                className="flex-1 inline-flex items-center justify-center gap-2 rounded-xl bg-white/15 px-4 py-3 text-sm font-semibold text-chip transition-all hover:bg-white/20 active:scale-95 cursor-pointer"
               >
                 {copiedMessage ? "¡Copiado! ✓" : "📋 Copiar Mensaje"}
               </button>
@@ -1613,7 +1613,7 @@ export function LiveRosterView({ initialState }: LiveRosterViewProps) {
                 )}`}
                 target="_blank"
                 rel="noreferrer"
-                className="flex-1 inline-flex items-center justify-center gap-2 rounded-xl bg-emerald-600 px-4 py-3 text-sm font-semibold text-white shadow transition-all hover:bg-emerald-500 active:scale-95"
+                className="flex-1 inline-flex items-center justify-center gap-2 rounded-xl bg-emerald-600 px-4 py-3 text-sm font-semibold text-white shadow transition-all hover:bg-emerald-500 active:scale-95 cursor-pointer"
               >
                 <span>💬</span>
                 <span>Abrir WhatsApp</span>

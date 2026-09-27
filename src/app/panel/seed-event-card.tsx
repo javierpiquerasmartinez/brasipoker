@@ -44,7 +44,7 @@ export function SeedEventCard() {
           type="button"
           onClick={handleSeed}
           disabled={isPending}
-          className="inline-flex items-center justify-center rounded-xl bg-emerald-600 px-5 py-2.5 text-sm font-semibold text-white shadow-md transition-all hover:bg-emerald-500 active:scale-[0.98] disabled:opacity-50"
+          className="inline-flex items-center justify-center rounded-xl bg-emerald-600 px-5 py-2.5 text-sm font-semibold text-white shadow-md transition-all hover:bg-emerald-500 active:scale-[0.98] disabled:opacity-50 cursor-pointer"
         >
           {isPending ? "Sembrando evento..." : "♠️ Crear Evento de ensayo ahora"}
         </button>
@@ -62,14 +62,14 @@ export function SeedEventCard() {
                   href={result.url}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-flex items-center gap-1.5 rounded-lg bg-emerald-500/20 px-3.5 py-1.5 text-sm font-medium text-emerald-300 hover:bg-emerald-500/30 transition-colors"
+                  className="inline-flex items-center gap-1.5 rounded-lg bg-emerald-500/20 px-3.5 py-1.5 text-sm font-medium text-emerald-300 hover:bg-emerald-500/30 transition-colors cursor-pointer"
                 >
                   Abrir enlace público de jugador ↗
                 </a>
                 <button
                   type="button"
                   onClick={() => copyUrl(result.url)}
-                  className="inline-flex items-center gap-1.5 rounded-lg border border-white/20 bg-felt-900 px-3.5 py-1.5 text-sm font-medium text-chip hover:bg-felt-800 transition-colors"
+                  className="inline-flex items-center gap-1.5 rounded-lg border border-white/20 bg-felt-900 px-3.5 py-1.5 text-sm font-medium text-chip hover:bg-felt-800 transition-colors cursor-pointer"
                 >
                   {copied ? "✓ ¡Enlace copiado!" : "Copiar enlace"}
                 </button>

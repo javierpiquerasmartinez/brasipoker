@@ -9,7 +9,7 @@ export function SubmitButton({ children }: { children: React.ReactNode }) {
     <button
       type="submit"
       disabled={pending}
-      className="mt-2 rounded-lg bg-felt-700 px-4 py-2.5 font-semibold text-white transition-colors hover:bg-felt-800 disabled:cursor-not-allowed disabled:opacity-60"
+      className="mt-2 rounded-lg bg-felt-700 px-4 py-2.5 font-semibold text-white transition-colors hover:bg-felt-800 disabled:cursor-not-allowed disabled:opacity-60 cursor-pointer"
     >
       {pending ? "Un momento…" : children}
     </button>

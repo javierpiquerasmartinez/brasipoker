@@ -8,6 +8,42 @@
   --color-chip: #f2efe6;
 }
 
+@layer base {
+  button:not(:disabled),
+  [role="button"]:not([aria-disabled="true"]),
+  [type="button"]:not(:disabled),
+  [type="reset"]:not(:disabled),
+  [type="submit"]:not(:disabled),
+  [type="checkbox"]:not(:disabled),
+  [type="radio"]:not(:disabled),
+  select:not(:disabled),
+  summary {
+    cursor: pointer;
+  }
+
+  button:disabled,
+  [role="button"][aria-disabled="true"],
+  [type="button"]:disabled,
+  [type="reset"]:disabled,
+  [type="submit"]:disabled,
+  [type="checkbox"]:disabled,
+  [type="radio"]:disabled,
+  select:disabled,
+  [disabled] {
+    cursor: not-allowed;
+  }
+
+  label:has(input[type="checkbox"]:not(:disabled)),
+  label:has(input[type="radio"]:not(:disabled)) {
+    cursor: pointer;
+  }
+
+  label:has(input[type="checkbox"]:disabled),
+  label:has(input[type="radio"]:disabled) {
+    cursor: not-allowed;
+  }
+}
+
 body {
   background: var(--color-felt-950);
   color: var(--color-chip);
