@@ -59,3 +59,8 @@ CREATE POLICY "Organizer full access to registrations" ON registrations FOR ALL 
     SELECT 1 FROM events WHERE events.id = registrations.event_id AND events.organizer_id = auth.uid()
   )
 );
+
+-- Enable Realtime
+ALTER PUBLICATION supabase_realtime ADD TABLE events;
+ALTER PUBLICATION supabase_realtime ADD TABLE registrations;
+
