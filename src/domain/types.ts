@@ -126,6 +126,32 @@ export interface VisibleEventState {
   cancelled: Registration[];
 }
 
+export interface PublicPlayerItem {
+  id: string;
+  nickname: string;
+  lateArrival: boolean;
+}
+
+export interface PublicWaitlistItem extends PublicPlayerItem {
+  waitlistPosition: number;
+}
+
+export interface PublicEventView {
+  id: string;
+  slug: string;
+  type: EventType;
+  date: string;
+  time: string;
+  capacity: number;
+  note?: string;
+  allowWaitlist: boolean;
+  status: EventStatus;
+  occupiedSeats: number;
+  freeSeats: number;
+  confirmed: PublicPlayerItem[];
+  waitlist: PublicWaitlistItem[];
+}
+
 export class EventNotFoundError extends Error {
   constructor(id: string) {
     super(`Event not found: ${id}`);

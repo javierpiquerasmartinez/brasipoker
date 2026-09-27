@@ -1,3 +1,5 @@
+import { SeedEventCard } from "./seed-event-card";
+
 export default function PanelHomePage() {
   return (
     <div className="flex flex-col gap-6">
@@ -7,12 +9,13 @@ export default function PanelHomePage() {
           Aquí gestionarás tus Eventos: crear, difundir y monitorizar en vivo.
         </p>
       </div>
+
+      <SeedEventCard />
+
       <section className="rounded-2xl border border-white/10 bg-felt-900 p-6">
-        <h2 className="font-semibold">Todavía no hay Eventos</h2>
+        <h2 className="font-semibold">Próximo Hito: Gestión Completa</h2>
         <p className="mt-2 text-sm text-chip/70">
-          La creación de Eventos llega con el siguiente hito. Ahora mismo ya
-          funcionan el registro y el login de Organizador con sesión
-          persistente, y la app es instalable como PWA desde el móvil.
+          El panel completo para crear, editar y difundir convocatorias llegará en el Issue #06. Usa la tarjeta superior para sembrar un Evento de ensayo y probar el flujo de jugador en tiempo real.
         </p>
       </section>
     </div>

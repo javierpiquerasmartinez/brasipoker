@@ -21,6 +21,9 @@ import {
   EditRegistrationCommand,
   GenerateWhatsAppTextCommand,
   Event,
+  PublicEventView,
+  PublicPlayerItem,
+  PublicWaitlistItem,
 } from './types';
 
 export class RegistrationDomain {
@@ -417,6 +420,75 @@ export class RegistrationDomain {
       waitlist,
       cancelled,
     };
+  }
+
+  /**
+   * Returns a sanitized public projection of an event for players.
+   * Strips all phone numbers and raw estimated arrival times to guarantee privacy.
+   */
+  async getPublicEventView(slug: string): Promise<PublicEventView | null> {
+    const event = await this.repo.findEventBySlug(slug);
+    if (!event) return null;
+
+    const registrations = await this.repo.listRegistrationsByEvent(event.id);
+
+    const confirmedRegs = registrations.filter((r) => r.status === 'confirmed');
+    const pendingConfirmation = registrations.filter(
+      (r) => r.status === 'pending_confirmation'
+    );
+    const waitlistRegs = this.getSortedWaitlist(registrations);
+
+    const occupiedSeats = confirmedRegs.length + pendingConfirmation.length;
+    const freeSeats = Math.max(0, event.capacity - occupiedSeats);
+
+    const confirmed: PublicPlayerItem[] = confirmedRegs.map((r) => ({
+      id: r.id,
+      nickname: r.nickname,
+      lateArrival: r.lateArrival,
+    }));
+
+    const waitlist: PublicWaitlistItem[] = waitlistRegs.map((r) => ({
+      id: r.id,
+      nickname: r.nickname,
+      lateArrival: r.lateArrival,
+      waitlistPosition: r.waitlistPosition ?? 1,
+    }));
+
+    return {
+      id: event.id,
+      slug: event.slug,
+      type: event.type,
+      date: event.date,
+      time: event.time,
+      capacity: event.capacity,
+      note: event.note,
+      allowWaitlist: event.allowWaitlist,
+      status: event.status,
+      occupiedSeats,
+      freeSeats,
+      confirmed,
+      waitlist,
+    };
+  }
+
+  /**
+   * Finds the active (non-cancelled) registration for a player given their phone number.
+   * Returns null if no active registration exists for this event and phone.
+   */
+  async getActiveRegistrationByPhone(
+    eventId: string,
+    phone: string
+  ): Promise<Registration | null> {
+    try {
+      const normalizedPhone = normalizePhone(phone);
+      const allRegistrations = await this.repo.listRegistrationsByEvent(eventId);
+      const active = allRegistrations.find(
+        (reg) => reg.phone === normalizedPhone && reg.status !== 'cancelled'
+      );
+      return active || null;
+    } catch {
+      return null;
+    }
   }
 
   async editEvent(command: EditEventCommand): Promise<Event> {
