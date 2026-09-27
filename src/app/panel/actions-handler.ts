@@ -1,6 +1,6 @@
 import { RegistrationDomain } from "@/domain/registration-domain";
 import { EventRepository } from "@/domain/event-repository";
-import { Event, EventType, EventStatus } from "@/domain/types";
+import { Event, EventType, EventStatus, VisibleEventState } from "@/domain/types";
 import {
   getEventVisualCycle,
   splitAndSortEvents,
@@ -66,6 +66,10 @@ export type GetOrganizerEventsActionResult =
 
 export type GetWhatsAppTextActionResult =
   | { success: true; text: string }
+  | { success: false; error: string };
+
+export type GetEventLiveStateActionResult =
+  | { success: true; state: VisibleEventState }
   | { success: false; error: string };
 
 export function createOrganizerActionsHandler(
@@ -225,6 +229,34 @@ export function createOrganizerActionsHandler(
           err instanceof Error
             ? err.message
             : "Error al generar texto de WhatsApp";
+        return { success: false, error: msg };
+      }
+    },
+
+    async getEventLiveState(
+      eventId: string
+    ): Promise<GetEventLiveStateActionResult> {
+      const userId = await getUserId();
+      if (!userId) {
+        return {
+          success: false,
+          error: "Debes iniciar sesión para ver este evento",
+        };
+      }
+      try {
+        const state = await domain.getVisibleEventState(eventId);
+        if (state.event.organizerId !== userId) {
+          return {
+            success: false,
+            error: "No tienes permiso para ver este evento",
+          };
+        }
+        return { success: true, state };
+      } catch (err) {
+        const msg =
+          err instanceof Error
+            ? err.message
+            : "Error al obtener el estado del evento";
         return { success: false, error: msg };
       }
     },

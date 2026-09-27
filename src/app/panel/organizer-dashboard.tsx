@@ -462,9 +462,14 @@ export function OrganizerDashboard({
 
                   {/* Date & Time */}
                   <div className="mt-4">
-                    <h2 className="text-xl font-bold text-chip">
-                      {capitalizeFirstLetter(formatSpanishDate(event.date))}
-                    </h2>
+                    <Link
+                      href={`/panel/eventos/${event.id}`}
+                      className="group inline-block"
+                    >
+                      <h2 className="text-xl font-bold text-chip transition-colors group-hover:text-emerald-400">
+                        {capitalizeFirstLetter(formatSpanishDate(event.date))}
+                      </h2>
+                    </Link>
                     <p className="mt-1 flex items-center gap-2 text-sm text-chip/70">
                       <span className="font-semibold text-emerald-400">
                         ⏰ {event.time} h
@@ -512,12 +517,21 @@ export function OrganizerDashboard({
 
                 {/* Card Footer: Actions */}
                 <div className="mt-6 flex flex-col gap-2.5 border-t border-white/10 pt-4">
+                  {/* Primary Action: Monitor Live */}
+                  <Link
+                    href={`/panel/eventos/${event.id}`}
+                    className="inline-flex items-center justify-center gap-2 rounded-xl border border-emerald-500/40 bg-felt-950/90 px-4 py-2.5 text-xs font-bold text-emerald-300 shadow transition-all hover:border-emerald-400 hover:bg-emerald-950/60"
+                  >
+                    <span className="h-2 w-2 rounded-full bg-emerald-400 animate-pulse" />
+                    <span>Monitorizar en vivo (Roster)</span>
+                  </Link>
+
                   {/* Share & Copy Link button */}
                   <div className="flex items-center gap-2">
                     <button
                       type="button"
                       onClick={() => handleOpenShare(event)}
-                      className="flex-1 inline-flex items-center justify-center gap-1.5 rounded-xl bg-emerald-600/90 px-3.5 py-2.5 text-xs font-semibold text-white shadow transition-colors hover:bg-emerald-500"
+                      className="flex-1 inline-flex items-center justify-center gap-1.5 rounded-xl bg-emerald-600/90 px-3.5 py-2 text-xs font-semibold text-white shadow transition-colors hover:bg-emerald-500"
                     >
                       <span>💬</span>
                       <span>Difundir (WhatsApp)</span>
@@ -526,7 +540,7 @@ export function OrganizerDashboard({
                     <Link
                       href={`/p/${event.slug}`}
                       target="_blank"
-                      className="inline-flex items-center justify-center rounded-xl border border-white/15 bg-white/5 px-3 py-2.5 text-xs font-semibold text-chip hover:bg-white/10"
+                      className="inline-flex items-center justify-center rounded-xl border border-white/15 bg-white/5 px-3 py-2 text-xs font-semibold text-chip hover:bg-white/10"
                       title="Ver enlace público"
                     >
                       🔗
