@@ -5,7 +5,6 @@ import { Database } from '../lib/supabase/database.types';
 
 type DbEvent = Database['public']['Tables']['events']['Row'];
 type DbRegistration = Database['public']['Tables']['registrations']['Row'];
-type DbPlayer = Database['public']['Tables']['players']['Row'];
 
 export class SupabaseEventRepository implements EventRepository {
   constructor(private readonly supabase: SupabaseClient<Database>) {}
@@ -103,7 +102,7 @@ export class SupabaseEventRepository implements EventRepository {
     if (error) throw new Error(`Failed to list registrations: ${error.message}`);
     
     return (data || []).map((row) => 
-      this.mapRegistration(row, (row.players as any).phone)
+      this.mapRegistration(row, (row.players as unknown as { phone: string }).phone)
     );
   }
 
@@ -120,12 +119,12 @@ export class SupabaseEventRepository implements EventRepository {
       .single();
 
     if (error || !data) return null;
-    return this.mapRegistration(data, (data.players as any).phone);
+    return this.mapRegistration(data, (data.players as unknown as { phone: string }).phone);
   }
 
   async saveRegistration(registration: Registration): Promise<void> {
     // 1. Ensure player exists
-    const { data: player, error: playerError } = await this.supabase
+    const { data: player } = await this.supabase
       .from('players')
       .select('id')
       .eq('phone', registration.phone)
