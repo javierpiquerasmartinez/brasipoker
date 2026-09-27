@@ -17,7 +17,16 @@ const AUTH_ERRORS: Record<string, string> = {
 };
 
 function translate(message: string): string {
-  return AUTH_ERRORS[message] ?? message;
+  if (AUTH_ERRORS[message]) {
+    return AUTH_ERRORS[message];
+  }
+  if (
+    message.toLowerCase().includes("is invalid") ||
+    message.toLowerCase().includes("invalid email")
+  ) {
+    return "El correo electrónico no es válido o su dominio no existe.";
+  }
+  return message;
 }
 
 function readCredentials(formData: FormData) {
