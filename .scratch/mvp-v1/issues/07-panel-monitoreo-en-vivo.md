@@ -4,12 +4,12 @@
 
 **Blocked by:** 06
 
-**Status:** ready-for-agent
+**Status:** ready-for-human
 
-- [ ] Tres secciones visibles — Confirmados / Lista de espera / Cancelados — con orden vigente de la espera
-- [ ] Actualización en tiempo real (Realtime) al darse de alta/baja/promoción cualquier actor
-- [ ] Contador de Plazas ocupadas/total destacado
-- [ ] Teléfonos visibles en el panel (nunca en la página pública, garantía de 05)
-- [ ] Badge destacado de Inscripciones en Pendiente de confirmación
-- [ ] Atribución de cada cancelación visible (el propio Jugador vs. el Organizador)
-- [ ] Hora estimada de llegada de cada Llegada tardía a la vista de la mesa
+- [x] Tres secciones visibles — Confirmados / Lista de espera / Cancelados — con orden vigente de la espera
+- [x] Actualización en tiempo real (Realtime) al darse de alta/baja/promoción cualquier actor
+- [x] Contador de Plazas ocupadas/total destacado
+- [x] Teléfonos visibles en el panel (nunca en la página pública, garantía de 05)
+- [x] Badge destacado de Inscripciones en Pendiente de confirmación
+- [x] Atribución de cada cancelación visible (el propio Jugador vs. el Organizador)
+- [x] Hora estimada de llegada de cada Llegada tardía a la vista de la mesa

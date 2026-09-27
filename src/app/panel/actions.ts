@@ -13,6 +13,7 @@ import {
   CancelEventActionResult,
   GetOrganizerEventsActionResult,
   GetWhatsAppTextActionResult,
+  GetEventLiveStateActionResult,
   OrganizerEventCardData,
 } from "./actions-handler";
 
@@ -25,6 +26,7 @@ export type {
   CancelEventActionResult,
   GetOrganizerEventsActionResult,
   GetWhatsAppTextActionResult,
+  GetEventLiveStateActionResult,
 };
 
 export type SeedEventResult =
@@ -92,6 +94,13 @@ export async function getWhatsAppTextAction(
 ): Promise<GetWhatsAppTextActionResult> {
   const handler = await getHandler();
   return handler.getWhatsAppText(eventId, baseUrl);
+}
+
+export async function getEventLiveStateAction(
+  eventId: string
+): Promise<GetEventLiveStateActionResult> {
+  const handler = await getHandler();
+  return handler.getEventLiveState(eventId);
 }
 
 export async function seedTestEventAction(): Promise<SeedEventResult> {

@@ -220,4 +220,77 @@ describe('Organizer Actions Handler — Panel Actions Seam', () => {
       }
     });
   });
+
+  describe('getEventLiveState', () => {
+    it('returns error when user is not authenticated', async () => {
+      currentUserId = null;
+      const res = await handler.getEventLiveState('some-id');
+      expect(res.success).toBe(false);
+      if (!res.success) {
+        expect(res.error).toMatch(/iniciar sesión/i);
+      }
+    });
+
+    it('returns error when event belongs to another organizer', async () => {
+      const ev = await domain.createEvent({
+        organizerId: 'other-org',
+        type: 'cash',
+        date: '2026-10-15',
+        time: '21:00',
+        capacity: 6,
+        allowWaitlist: true,
+      });
+
+      const res = await handler.getEventLiveState(ev.id);
+      expect(res.success).toBe(false);
+      if (!res.success) {
+        expect(res.error).toMatch(/permiso|no encontrado/i);
+      }
+    });
+
+    it('returns full live state including phones, waitlist and cancelled for authorized organizer', async () => {
+      const ev = await domain.createEvent({
+        organizerId: 'org-1',
+        type: 'cash',
+        date: '2026-10-15',
+        time: '21:00',
+        capacity: 1,
+        allowWaitlist: true,
+      });
+
+      // Register confirmed player with late arrival
+      await domain.registerPlayer({
+        eventId: ev.id,
+        phone: '611111111',
+        nickname: 'Carlos',
+        lateArrival: true,
+        estimatedArrivalTime: '22:00',
+      });
+
+      // Register waitlisted player
+      await domain.registerPlayer({
+        eventId: ev.id,
+        phone: '622222222',
+        nickname: 'Ana',
+        lateArrival: false,
+      });
+
+      const res = await handler.getEventLiveState(ev.id);
+      expect(res.success).toBe(true);
+      if (res.success) {
+        expect(res.state.capacity).toBe(1);
+        expect(res.state.occupiedSeats).toBe(1);
+        expect(res.state.confirmed).toHaveLength(1);
+        expect(res.state.confirmed[0].nickname).toBe('Carlos');
+        expect(res.state.confirmed[0].phone).toBe('+34611111111');
+        expect(res.state.confirmed[0].lateArrival).toBe(true);
+        expect(res.state.confirmed[0].estimatedArrivalTime).toBe('22:00');
+
+        expect(res.state.waitlist).toHaveLength(1);
+        expect(res.state.waitlist[0].nickname).toBe('Ana');
+        expect(res.state.waitlist[0].phone).toBe('+34622222222');
+        expect(res.state.waitlist[0].waitlistPosition).toBe(1);
+      }
+    });
+  });
 });
