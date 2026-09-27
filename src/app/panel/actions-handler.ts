@@ -1,6 +1,15 @@
 import { RegistrationDomain } from "@/domain/registration-domain";
 import { EventRepository } from "@/domain/event-repository";
-import { Event, EventType, EventStatus, VisibleEventState } from "@/domain/types";
+import {
+  Event,
+  EventType,
+  EventStatus,
+  VisibleEventState,
+  Registration,
+  RegistrationResult,
+  CancelResult,
+  RejectResult,
+} from "@/domain/types";
 import {
   getEventVisualCycle,
   splitAndSortEvents,
@@ -26,6 +35,19 @@ export interface EditEventInput {
   allowWaitlist?: boolean;
 }
 
+export interface ManualRegisterInput {
+  phone: string;
+  nickname: string;
+  lateArrival: boolean;
+  estimatedArrivalTime?: string;
+}
+
+export interface EditRegistrationInput {
+  nickname?: string;
+  lateArrival?: boolean;
+  estimatedArrivalTime?: string;
+}
+
 export interface OrganizerEventCardData {
   id: string;
   organizerId: string;
@@ -42,6 +64,12 @@ export interface OrganizerEventCardData {
   pendingCount: number;
   waitlistCount: number;
   visualCycle: EventVisualCycle;
+  roster: {
+    confirmed: Registration[];
+    pendingConfirmation: Registration[];
+    waitlist: Registration[];
+    cancelled: Registration[];
+  };
 }
 
 export type CreateEventActionResult =
@@ -72,11 +100,63 @@ export type GetEventLiveStateActionResult =
   | { success: true; state: VisibleEventState }
   | { success: false; error: string };
 
+export type ConfirmPendingActionResult =
+  | { success: true; registration: Registration }
+  | { success: false; error: string };
+
+export type RejectPendingActionResult =
+  | { success: true; result: RejectResult }
+  | { success: false; error: string };
+
+export type ManualRegisterActionResult =
+  | { success: true; result: RegistrationResult }
+  | { success: false; error: string };
+
+export type ReorderWaitlistActionResult =
+  | { success: true; waitlist: Registration[] }
+  | { success: false; error: string };
+
+export type EditRegistrationActionResult =
+  | { success: true; registration: Registration }
+  | { success: false; error: string };
+
+export type CancelRegistrationActionResult =
+  | { success: true; result: CancelResult }
+  | { success: false; error: string };
+
+export type UpdateCapacityActionResult =
+  | { success: true; event: Event }
+  | { success: false; error: string };
+
 export function createOrganizerActionsHandler(
   domain: RegistrationDomain,
   getUserId: () => string | null | Promise<string | null>,
   repo?: EventRepository
 ) {
+  async function checkOwnership(eventId: string) {
+    const userId = await getUserId();
+    if (!userId) {
+      return {
+        authorized: false as const,
+        error: "Debes iniciar sesión para realizar esta acción",
+      };
+    }
+    try {
+      const state = await domain.getVisibleEventState(eventId);
+      if (state.event.organizerId !== userId) {
+        return {
+          authorized: false as const,
+          error: "No tienes permiso sobre este evento",
+        };
+      }
+      return { authorized: true as const, state };
+    } catch (err) {
+      const msg =
+        err instanceof Error ? err.message : "Evento no encontrado";
+      return { authorized: false as const, error: msg };
+    }
+  }
+
   return {
     async createEvent(input: CreateEventInput): Promise<CreateEventActionResult> {
       const userId = await getUserId();
@@ -199,6 +279,12 @@ export function createOrganizerActionsHandler(
             pendingCount: state.pendingConfirmation.length,
             waitlistCount: state.waitlist.length,
             visualCycle: getEventVisualCycle(ev, referenceDate),
+            roster: {
+              confirmed: state.confirmed,
+              pendingConfirmation: state.pendingConfirmation,
+              waitlist: state.waitlist,
+              cancelled: state.cancelled,
+            },
           };
         };
 
@@ -236,27 +322,168 @@ export function createOrganizerActionsHandler(
     async getEventLiveState(
       eventId: string
     ): Promise<GetEventLiveStateActionResult> {
-      const userId = await getUserId();
-      if (!userId) {
-        return {
-          success: false,
-          error: "Debes iniciar sesión para ver este evento",
-        };
+      const auth = await checkOwnership(eventId);
+      if (!auth.authorized) {
+        return { success: false, error: auth.error };
+      }
+      return { success: true, state: auth.state };
+    },
+
+    async confirmPending(
+      eventId: string,
+      registrationId: string
+    ): Promise<ConfirmPendingActionResult> {
+      const auth = await checkOwnership(eventId);
+      if (!auth.authorized) {
+        return { success: false, error: auth.error };
       }
       try {
-        const state = await domain.getVisibleEventState(eventId);
-        if (state.event.organizerId !== userId) {
-          return {
-            success: false,
-            error: "No tienes permiso para ver este evento",
-          };
-        }
-        return { success: true, state };
+        const registration = await domain.confirmPending({
+          eventId,
+          registrationId,
+        });
+        return { success: true, registration };
+      } catch (err) {
+        const msg =
+          err instanceof Error ? err.message : "Error al confirmar la plaza";
+        return { success: false, error: msg };
+      }
+    },
+
+    async rejectPending(
+      eventId: string,
+      registrationId: string
+    ): Promise<RejectPendingActionResult> {
+      const auth = await checkOwnership(eventId);
+      if (!auth.authorized) {
+        return { success: false, error: auth.error };
+      }
+      try {
+        const result = await domain.rejectPending({
+          eventId,
+          registrationId,
+        });
+        return { success: true, result };
+      } catch (err) {
+        const msg =
+          err instanceof Error ? err.message : "Error al rechazar la plaza";
+        return { success: false, error: msg };
+      }
+    },
+
+    async manualRegister(
+      eventId: string,
+      input: ManualRegisterInput
+    ): Promise<ManualRegisterActionResult> {
+      const auth = await checkOwnership(eventId);
+      if (!auth.authorized) {
+        return { success: false, error: auth.error };
+      }
+      try {
+        const result = await domain.registerPlayer({
+          eventId,
+          phone: input.phone,
+          nickname: input.nickname,
+          lateArrival: input.lateArrival,
+          estimatedArrivalTime: input.estimatedArrivalTime,
+        });
+        return { success: true, result };
+      } catch (err) {
+        const msg =
+          err instanceof Error ? err.message : "Error al inscribir al jugador";
+        return { success: false, error: msg };
+      }
+    },
+
+    async reorderWaitlist(
+      eventId: string,
+      newOrderRegistrationIds: string[]
+    ): Promise<ReorderWaitlistActionResult> {
+      const auth = await checkOwnership(eventId);
+      if (!auth.authorized) {
+        return { success: false, error: auth.error };
+      }
+      try {
+        const waitlist = await domain.reorderWaitlist({
+          eventId,
+          newOrderRegistrationIds,
+        });
+        return { success: true, waitlist };
       } catch (err) {
         const msg =
           err instanceof Error
             ? err.message
-            : "Error al obtener el estado del evento";
+            : "Error al reordenar la lista de espera";
+        return { success: false, error: msg };
+      }
+    },
+
+    async editRegistration(
+      eventId: string,
+      registrationId: string,
+      input: EditRegistrationInput
+    ): Promise<EditRegistrationActionResult> {
+      const auth = await checkOwnership(eventId);
+      if (!auth.authorized) {
+        return { success: false, error: auth.error };
+      }
+      try {
+        const registration = await domain.editRegistration({
+          eventId,
+          registrationId,
+          nickname: input.nickname,
+          lateArrival: input.lateArrival,
+          estimatedArrivalTime: input.estimatedArrivalTime,
+        });
+        return { success: true, registration };
+      } catch (err) {
+        const msg =
+          err instanceof Error ? err.message : "Error al editar la inscripción";
+        return { success: false, error: msg };
+      }
+    },
+
+    async cancelRegistration(
+      eventId: string,
+      registrationId: string
+    ): Promise<CancelRegistrationActionResult> {
+      const auth = await checkOwnership(eventId);
+      if (!auth.authorized) {
+        return { success: false, error: auth.error };
+      }
+      try {
+        const result = await domain.cancelRegistration({
+          eventId,
+          registrationId,
+          cancelledBy: "organizer",
+        });
+        return { success: true, result };
+      } catch (err) {
+        const msg =
+          err instanceof Error
+            ? err.message
+            : "Error al cancelar la inscripción";
+        return { success: false, error: msg };
+      }
+    },
+
+    async updateCapacity(
+      eventId: string,
+      capacity: number
+    ): Promise<UpdateCapacityActionResult> {
+      const auth = await checkOwnership(eventId);
+      if (!auth.authorized) {
+        return { success: false, error: auth.error };
+      }
+      try {
+        const event = await domain.editEvent({
+          eventId,
+          capacity,
+        });
+        return { success: true, event };
+      } catch (err) {
+        const msg =
+          err instanceof Error ? err.message : "Error al actualizar el cupo";
         return { success: false, error: msg };
       }
     },

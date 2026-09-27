@@ -193,10 +193,14 @@ describe('Organizer Actions Handler — Panel Actions Seam', () => {
         expect(res.upcoming[0].id).toBe(future.id);
         expect(res.upcoming[0].occupiedSeats).toBe(1);
         expect(res.upcoming[0].visualCycle).toBe('upcoming');
+        expect(res.upcoming[0].roster).toBeDefined();
+        expect(res.upcoming[0].roster.confirmed).toHaveLength(1);
+        expect(res.upcoming[0].roster.confirmed[0].nickname).toBe('Juan');
 
         expect(res.past).toHaveLength(1);
         expect(res.past[0].id).toBe(past.id);
         expect(res.past[0].visualCycle).toBe('past');
+        expect(res.past[0].roster).toBeDefined();
       }
     });
   });
@@ -293,4 +297,381 @@ describe('Organizer Actions Handler — Panel Actions Seam', () => {
       }
     });
   });
+
+  describe('confirmPending', () => {
+    it('confirms a player in pending_confirmation status', async () => {
+      const ev = await domain.createEvent({
+        organizerId: 'org-1',
+        type: 'cash',
+        date: '2026-10-15',
+        time: '21:00',
+        capacity: 1,
+        allowWaitlist: true,
+      });
+
+      const p1 = await domain.registerPlayer({
+        eventId: ev.id,
+        phone: '611111111',
+        nickname: 'Pedro',
+        lateArrival: false,
+      });
+      const p2 = await domain.registerPlayer({
+        eventId: ev.id,
+        phone: '622222222',
+        nickname: 'Ana',
+        lateArrival: false,
+      });
+
+      if (p1.type !== 'confirmed' || p2.type !== 'waitlisted') {
+        throw new Error('Unexpected test setup');
+      }
+
+      // Cancel p1 -> p2 becomes pending_confirmation
+      await domain.cancelRegistration({
+        eventId: ev.id,
+        registrationId: p1.registration.id,
+        cancelledBy: 'player',
+      });
+
+      const res = await handler.confirmPending(ev.id, p2.registration.id);
+      expect(res.success).toBe(true);
+      if (res.success) {
+        expect(res.registration.status).toBe('confirmed');
+      }
+
+      const state = await domain.getVisibleEventState(ev.id);
+      expect(state.confirmed).toHaveLength(1);
+      expect(state.confirmed[0].nickname).toBe('Ana');
+      expect(state.pendingConfirmation).toHaveLength(0);
+    });
+
+    it('rejects confirming if user is not authorized', async () => {
+      const ev = await domain.createEvent({
+        organizerId: 'org-1',
+        type: 'cash',
+        date: '2026-10-15',
+        time: '21:00',
+        capacity: 1,
+        allowWaitlist: true,
+      });
+
+      currentUserId = 'other';
+      const res = await handler.confirmPending(ev.id, 'some-id');
+      expect(res.success).toBe(false);
+    });
+  });
+
+  describe('rejectPending', () => {
+    it('rejects pending player, marks as cancelled by organizer, and promotes next in waitlist', async () => {
+      const ev = await domain.createEvent({
+        organizerId: 'org-1',
+        type: 'cash',
+        date: '2026-10-15',
+        time: '21:00',
+        capacity: 1,
+        allowWaitlist: true,
+      });
+
+      const p1 = await domain.registerPlayer({
+        eventId: ev.id,
+        phone: '611111111',
+        nickname: 'P1',
+        lateArrival: false,
+      });
+      const w1 = await domain.registerPlayer({
+        eventId: ev.id,
+        phone: '622222222',
+        nickname: 'W1',
+        lateArrival: false,
+      });
+      const w2 = await domain.registerPlayer({
+        eventId: ev.id,
+        phone: '633333333',
+        nickname: 'W2',
+        lateArrival: false,
+      });
+
+      if (p1.type !== 'confirmed' || w1.type !== 'waitlisted' || w2.type !== 'waitlisted') {
+        throw new Error('Unexpected test setup');
+      }
+
+      // Free seat: W1 becomes pending_confirmation
+      await domain.cancelRegistration({
+        eventId: ev.id,
+        registrationId: p1.registration.id,
+        cancelledBy: 'player',
+      });
+
+      // Organizer rejects W1
+      const res = await handler.rejectPending(ev.id, w1.registration.id);
+      expect(res.success).toBe(true);
+      if (res.success) {
+        expect(res.result.rejectedRegistration.status).toBe('cancelled');
+        expect(res.result.rejectedRegistration.cancelledBy).toBe('organizer');
+        expect(res.result.promotedRegistration?.nickname).toBe('W2');
+        expect(res.result.promotedRegistration?.status).toBe('pending_confirmation');
+      }
+
+      const state = await domain.getVisibleEventState(ev.id);
+      expect(state.pendingConfirmation).toHaveLength(1);
+      expect(state.pendingConfirmation[0].nickname).toBe('W2');
+      expect(state.waitlist).toHaveLength(0);
+      expect(state.cancelled).toHaveLength(2); // P1 and W1
+    });
+  });
+
+  describe('manualRegister', () => {
+    it('adds player directly as confirmed when seats available', async () => {
+      const ev = await domain.createEvent({
+        organizerId: 'org-1',
+        type: 'cash',
+        date: '2026-10-15',
+        time: '21:00',
+        capacity: 2,
+        allowWaitlist: true,
+      });
+
+      const res = await handler.manualRegister(ev.id, {
+        phone: '611223344',
+        nickname: 'Jugador Manual',
+        lateArrival: true,
+        estimatedArrivalTime: '21:30',
+      });
+
+      expect(res.success).toBe(true);
+      if (res.success) {
+        expect(res.result.type).toBe('confirmed');
+        if (res.result.type === 'confirmed') {
+          expect(res.result.registration.phone).toBe('+34611223344');
+          expect(res.result.registration.nickname).toBe('Jugador Manual');
+          expect(res.result.registration.lateArrival).toBe(true);
+          expect(res.result.registration.estimatedArrivalTime).toBe('21:30');
+        }
+      }
+    });
+
+    it('adds player to waitlist when capacity is full', async () => {
+      const ev = await domain.createEvent({
+        organizerId: 'org-1',
+        type: 'cash',
+        date: '2026-10-15',
+        time: '21:00',
+        capacity: 1,
+        allowWaitlist: true,
+      });
+
+      await domain.registerPlayer({
+        eventId: ev.id,
+        phone: '600000000',
+        nickname: 'First',
+        lateArrival: false,
+      });
+
+      const res = await handler.manualRegister(ev.id, {
+        phone: '611223344',
+        nickname: 'Second',
+        lateArrival: false,
+      });
+
+      expect(res.success).toBe(true);
+      if (res.success) {
+        expect(res.result.type).toBe('waitlisted');
+        if (res.result.type === 'waitlisted') {
+          expect(res.result.position).toBe(1);
+        }
+      }
+    });
+  });
+
+  describe('reorderWaitlist', () => {
+    it('reorders waitlist positions and affects next promotion', async () => {
+      const ev = await domain.createEvent({
+        organizerId: 'org-1',
+        type: 'cash',
+        date: '2026-10-15',
+        time: '21:00',
+        capacity: 1,
+        allowWaitlist: true,
+      });
+
+      const p1 = await domain.registerPlayer({
+        eventId: ev.id,
+        phone: '600000000',
+        nickname: 'Active',
+        lateArrival: false,
+      });
+      const w1 = await domain.registerPlayer({
+        eventId: ev.id,
+        phone: '611111111',
+        nickname: 'W1',
+        lateArrival: false,
+      });
+      const w2 = await domain.registerPlayer({
+        eventId: ev.id,
+        phone: '622222222',
+        nickname: 'W2',
+        lateArrival: false,
+      });
+
+      if (w1.type !== 'waitlisted' || w2.type !== 'waitlisted' || p1.type !== 'confirmed') {
+        throw new Error('Test setup failed');
+      }
+
+      // Reorder so W2 is first and W1 is second
+      const res = await handler.reorderWaitlist(ev.id, [
+        w2.registration.id,
+        w1.registration.id,
+      ]);
+
+      expect(res.success).toBe(true);
+      if (res.success) {
+        expect(res.waitlist[0].id).toBe(w2.registration.id);
+        expect(res.waitlist[0].waitlistPosition).toBe(1);
+        expect(res.waitlist[1].id).toBe(w1.registration.id);
+        expect(res.waitlist[1].waitlistPosition).toBe(2);
+      }
+
+      // Cancelling active player should promote W2 first
+      await domain.cancelRegistration({
+        eventId: ev.id,
+        registrationId: p1.registration.id,
+        cancelledBy: 'player',
+      });
+
+      const state = await domain.getVisibleEventState(ev.id);
+      expect(state.pendingConfirmation[0].nickname).toBe('W2');
+    });
+  });
+
+  describe('editRegistration', () => {
+    it('updates registration nickname and late arrival', async () => {
+      const ev = await domain.createEvent({
+        organizerId: 'org-1',
+        type: 'cash',
+        date: '2026-10-15',
+        time: '21:00',
+        capacity: 2,
+        allowWaitlist: true,
+      });
+
+      const p1 = await domain.registerPlayer({
+        eventId: ev.id,
+        phone: '611111111',
+        nickname: 'Initial Nick',
+        lateArrival: false,
+      });
+      if (p1.type !== 'confirmed') throw new Error('Setup failed');
+
+      const res = await handler.editRegistration(ev.id, p1.registration.id, {
+        nickname: 'Edited Nick',
+        lateArrival: true,
+        estimatedArrivalTime: '22:15',
+      });
+
+      expect(res.success).toBe(true);
+      if (res.success) {
+        expect(res.registration.nickname).toBe('Edited Nick');
+        expect(res.registration.lateArrival).toBe(true);
+        expect(res.registration.estimatedArrivalTime).toBe('22:15');
+      }
+    });
+  });
+
+  describe('cancelRegistration', () => {
+    it('cancels registration with organizer attribution and promotes waitlist', async () => {
+      const ev = await domain.createEvent({
+        organizerId: 'org-1',
+        type: 'cash',
+        date: '2026-10-15',
+        time: '21:00',
+        capacity: 1,
+        allowWaitlist: true,
+      });
+
+      const p1 = await domain.registerPlayer({
+        eventId: ev.id,
+        phone: '611111111',
+        nickname: 'Confirmed Player',
+        lateArrival: false,
+      });
+      const w1 = await domain.registerPlayer({
+        eventId: ev.id,
+        phone: '622222222',
+        nickname: 'Waitlisted Player',
+        lateArrival: false,
+      });
+      if (p1.type !== 'confirmed' || w1.type !== 'waitlisted') throw new Error('Setup failed');
+
+      const res = await handler.cancelRegistration(ev.id, p1.registration.id);
+      expect(res.success).toBe(true);
+      if (res.success) {
+        expect(res.result.cancelledRegistration.status).toBe('cancelled');
+        expect(res.result.cancelledRegistration.cancelledBy).toBe('organizer');
+        expect(res.result.promotedRegistration?.nickname).toBe('Waitlisted Player');
+        expect(res.result.promotedRegistration?.status).toBe('pending_confirmation');
+      }
+    });
+  });
+
+  describe('updateCapacity', () => {
+    it('reduces capacity and moves displaced players to front of waitlist', async () => {
+      const ev = await domain.createEvent({
+        organizerId: 'org-1',
+        type: 'cash',
+        date: '2026-10-15',
+        time: '21:00',
+        capacity: 3,
+        allowWaitlist: true,
+      });
+
+      await domain.registerPlayer({ eventId: ev.id, phone: '611111111', nickname: 'P1', lateArrival: false });
+      await domain.registerPlayer({ eventId: ev.id, phone: '622222222', nickname: 'P2', lateArrival: false });
+      await domain.registerPlayer({ eventId: ev.id, phone: '633333333', nickname: 'P3', lateArrival: false });
+      await domain.registerPlayer({ eventId: ev.id, phone: '644444444', nickname: 'W1', lateArrival: false });
+
+      const res = await handler.updateCapacity(ev.id, 1);
+      expect(res.success).toBe(true);
+      if (res.success) {
+        expect(res.event.capacity).toBe(1);
+      }
+
+      const state = await domain.getVisibleEventState(ev.id);
+      expect(state.capacity).toBe(1);
+      expect(state.confirmed).toHaveLength(1);
+      expect(state.confirmed[0].nickname).toBe('P1');
+      expect(state.waitlist[0].nickname).toBe('P2');
+      expect(state.waitlist[1].nickname).toBe('P3');
+      expect(state.waitlist[2].nickname).toBe('W1');
+    });
+
+    it('expands capacity and cascade promotes waitlist to pending_confirmation', async () => {
+      const ev = await domain.createEvent({
+        organizerId: 'org-1',
+        type: 'cash',
+        date: '2026-10-15',
+        time: '21:00',
+        capacity: 1,
+        allowWaitlist: true,
+      });
+
+      await domain.registerPlayer({ eventId: ev.id, phone: '611111111', nickname: 'P1', lateArrival: false });
+      await domain.registerPlayer({ eventId: ev.id, phone: '622222222', nickname: 'W1', lateArrival: false });
+      await domain.registerPlayer({ eventId: ev.id, phone: '633333333', nickname: 'W2', lateArrival: false });
+
+      const res = await handler.updateCapacity(ev.id, 3);
+      expect(res.success).toBe(true);
+      if (res.success) {
+        expect(res.event.capacity).toBe(3);
+      }
+
+      const state = await domain.getVisibleEventState(ev.id);
+      expect(state.capacity).toBe(3);
+      expect(state.confirmed).toHaveLength(1);
+      expect(state.pendingConfirmation).toHaveLength(2);
+      expect(state.pendingConfirmation[0].nickname).toBe('W1');
+      expect(state.pendingConfirmation[1].nickname).toBe('W2');
+      expect(state.waitlist).toHaveLength(0);
+    });
+  });
 });
+
