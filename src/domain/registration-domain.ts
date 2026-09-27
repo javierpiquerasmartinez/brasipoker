@@ -20,6 +20,7 @@ import {
   CancelEventCommand,
   EditRegistrationCommand,
   GenerateWhatsAppTextCommand,
+  CreateEventCommand,
   Event,
   PublicEventView,
   PublicPlayerItem,
@@ -616,32 +617,101 @@ export class RegistrationDomain {
     return reg;
   }
 
+  /**
+   * Creates a new Event for an organizer with a short random non-guessable slug.
+   */
+  async createEvent(command: CreateEventCommand): Promise<Event> {
+    if (!command.organizerId || !command.organizerId.trim()) {
+      throw new InvalidRegistrationDataError('Organizer ID is required');
+    }
+    if (command.type !== 'cash' && command.type !== 'tournament') {
+      throw new InvalidRegistrationDataError('Invalid event type');
+    }
+    if (
+      typeof command.capacity !== 'number' ||
+      command.capacity <= 0 ||
+      !Number.isInteger(command.capacity)
+    ) {
+      throw new InvalidRegistrationDataError('Capacity must be a positive integer');
+    }
+
+    const dateRegex = /^\d{4}-\d{2}-\d{2}$/;
+    if (!dateRegex.test(command.date) || isNaN(Date.parse(command.date))) {
+      throw new InvalidRegistrationDataError('Date must be in valid YYYY-MM-DD format');
+    }
+
+    const timeRegex = /^([01]\d|2[0-3]):[0-5]\d$/;
+    if (!timeRegex.test(command.time)) {
+      throw new InvalidRegistrationDataError('Time must be in valid HH:mm format');
+    }
+
+    // Generate unique short random slug (7 alphanumeric characters)
+    let slug = generateRandomSlug(7);
+    let attempts = 0;
+    while (attempts < 5 && (await this.repo.findEventBySlug(slug))) {
+      slug = generateRandomSlug(7);
+      attempts++;
+    }
+
+    const event: Event = {
+      id: crypto.randomUUID(),
+      organizerId: command.organizerId,
+      slug,
+      type: command.type,
+      date: command.date,
+      time: command.time,
+      capacity: command.capacity,
+      note: command.note?.trim() || undefined,
+      allowWaitlist: command.allowWaitlist,
+      status: 'active',
+      createdAt: new Date(),
+    };
+
+    await this.repo.saveEvent(event);
+    return event;
+  }
+
   async generateWhatsAppText(command: GenerateWhatsAppTextCommand): Promise<string> {
     const state = await this.getVisibleEventState(command.eventId);
-    
-    let text = `*Event: ${state.event.slug}*\n`;
-    text += `*Type:* ${state.event.type === 'cash' ? 'Cash Game' : 'Tournament'}\n`;
-    text += `*Date:* ${state.event.date} at ${state.event.time}\n\n`;
-    
-    text += `*Confirmed (${state.confirmed.length}/${state.capacity}):*\n`;
-    state.confirmed.forEach((r, idx) => {
-      text += `${idx + 1}. ${r.nickname}${r.lateArrival ? ` (Late: ${r.estimatedArrivalTime})` : ''}\n`;
-    });
-    
+    const { event, confirmed, capacity, waitlist } = state;
+
+    const typeTitle =
+      event.type === 'cash' ? '♠️📣 *PARTIDA DE PÓKER (CASH)*' : '♠️📣 *TORNEO DE PÓKER*';
+
+    const baseUrl = command.baseUrl ? command.baseUrl.replace(/\/+$/, '') : '';
+    const publicUrl = baseUrl ? `${baseUrl}/p/${event.slug}` : `/p/${event.slug}`;
+
+    let text = `${typeTitle}\n\n`;
+    text += `📅 *Fecha:* ${event.date}\n`;
+    text += `⏰ *Hora:* ${event.time} h\n`;
+    if (event.note) {
+      text += `📝 *Detalles:* ${event.note}\n`;
+    }
+    text += `👥 *Plazas:* ${confirmed.length}/${capacity} ocupadas\n`;
+    text += `🔗 *Apúntate aquí:* ${publicUrl}\n`;
+
+    if (confirmed.length > 0) {
+      text += `\n*Confirmados (${confirmed.length}/${capacity}):*\n`;
+      confirmed.forEach((r, idx) => {
+        const late = r.lateArrival ? ` (Llegará tarde: ${r.estimatedArrivalTime})` : '';
+        text += `${idx + 1}. ${r.nickname}${late}\n`;
+      });
+    }
+
     if (state.pendingConfirmation.length > 0) {
-      text += `\n*Pending Confirmation:*\n`;
+      text += `\n*Pendiente de confirmación:*\n`;
       state.pendingConfirmation.forEach((r, idx) => {
         text += `${idx + 1}. ${r.nickname}\n`;
       });
     }
 
-    if (state.waitlist.length > 0) {
-      text += `\n*Waitlist:*\n`;
-      state.waitlist.forEach((r) => {
+    if (waitlist.length > 0) {
+      text += `\n*Lista de espera:*\n`;
+      waitlist.forEach((r) => {
         text += `${r.waitlistPosition}. ${r.nickname}\n`;
       });
     }
-    
+
     return text;
   }
 
@@ -650,4 +720,15 @@ export class RegistrationDomain {
       .filter((r) => r.status === 'waitlisted')
       .sort((a, b) => (a.waitlistPosition ?? 0) - (b.waitlistPosition ?? 0));
   }
+}
+
+function generateRandomSlug(length = 7): string {
+  const chars = '23456789abcdefghijkmnopqrstuvwxyzABCDEFGHJKLMNPQRSTUVWXYZ';
+  const bytes = new Uint8Array(length);
+  crypto.getRandomValues(bytes);
+  let slug = '';
+  for (let i = 0; i < length; i++) {
+    slug += chars[bytes[i] % chars.length];
+  }
+  return slug;
 }

@@ -1,51 +1,123 @@
 "use server";
 
+import { revalidatePath } from "next/cache";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { SupabaseEventRepository } from "@/domain/supabase-event-repository";
-import { Event } from "@/domain/types";
+import { RegistrationDomain } from "@/domain/registration-domain";
+import {
+  createOrganizerActionsHandler,
+  CreateEventInput,
+  EditEventInput,
+  CreateEventActionResult,
+  EditEventActionResult,
+  CancelEventActionResult,
+  GetOrganizerEventsActionResult,
+  GetWhatsAppTextActionResult,
+  OrganizerEventCardData,
+} from "./actions-handler";
+
+export type {
+  CreateEventInput,
+  EditEventInput,
+  OrganizerEventCardData,
+  CreateEventActionResult,
+  EditEventActionResult,
+  CancelEventActionResult,
+  GetOrganizerEventsActionResult,
+  GetWhatsAppTextActionResult,
+};
 
 export type SeedEventResult =
   | { success: true; slug: string; url: string }
   | { success: false; error: string };
 
-export async function seedTestEventAction(): Promise<SeedEventResult> {
+async function getHandler() {
   const supabase = await createSupabaseServerClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+  const repo = new SupabaseEventRepository(supabase);
+  const domain = new RegistrationDomain(repo);
 
-  if (!user) {
-    return { success: false, error: "Debes iniciar sesión como organizador para sembrar un evento" };
+  const getUserId = async () => {
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+    return user ? user.id : null;
+  };
+
+  return createOrganizerActionsHandler(domain, getUserId, repo);
+}
+
+export async function createOrganizerEventAction(
+  input: CreateEventInput
+): Promise<CreateEventActionResult> {
+  const handler = await getHandler();
+  const res = await handler.createEvent(input);
+  if (res.success) {
+    revalidatePath("/panel");
   }
+  return res;
+}
 
-  const randomSuffix = Math.random().toString(36).substring(2, 7);
-  const slug = `ensayo-${randomSuffix}`;
+export async function editOrganizerEventAction(
+  input: EditEventInput
+): Promise<EditEventActionResult> {
+  const handler = await getHandler();
+  const res = await handler.editEvent(input);
+  if (res.success) {
+    revalidatePath("/panel");
+    revalidatePath(`/p/${res.event.slug}`);
+  }
+  return res;
+}
 
+export async function cancelOrganizerEventAction(
+  eventId: string
+): Promise<CancelEventActionResult> {
+  const handler = await getHandler();
+  const res = await handler.cancelEvent(eventId);
+  if (res.success) {
+    revalidatePath("/panel");
+    revalidatePath(`/p/${res.event.slug}`);
+  }
+  return res;
+}
+
+export async function getOrganizerEventsAction(): Promise<GetOrganizerEventsActionResult> {
+  const handler = await getHandler();
+  return handler.getOrganizerEvents();
+}
+
+export async function getWhatsAppTextAction(
+  eventId: string,
+  baseUrl?: string
+): Promise<GetWhatsAppTextActionResult> {
+  const handler = await getHandler();
+  return handler.getWhatsAppText(eventId, baseUrl);
+}
+
+export async function seedTestEventAction(): Promise<SeedEventResult> {
+  const handler = await getHandler();
   const today = new Date();
   const yyyy = today.getFullYear();
   const mm = String(today.getMonth() + 1).padStart(2, "0");
   const dd = String(today.getDate()).padStart(2, "0");
 
-  const event: Event = {
-    id: crypto.randomUUID(),
-    organizerId: user.id,
-    slug,
+  const res = await handler.createEvent({
     type: "cash",
     date: `${yyyy}-${mm}-${dd}`,
     time: "21:00",
     capacity: 6,
     note: "Partida de ensayo para probar el flujo de jugador de punta a punta",
     allowWaitlist: true,
-    status: "active",
-    createdAt: new Date(),
-  };
+  });
 
-  try {
-    const repo = new SupabaseEventRepository(supabase);
-    await repo.saveEvent(event);
-    return { success: true, slug, url: `/p/${slug}` };
-  } catch (err: unknown) {
-    const message = err instanceof Error ? err.message : "Error al sembrar evento";
-    return { success: false, error: message };
+  if (res.success) {
+    revalidatePath("/panel");
+    return {
+      success: true,
+      slug: res.event.slug,
+      url: `/p/${res.event.slug}`,
+    };
   }
+
+  return { success: false, error: res.error };
 }
