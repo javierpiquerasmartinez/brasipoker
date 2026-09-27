@@ -16,6 +16,11 @@ import {
   RejectResult,
   ReorderWaitlistCommand,
   VisibleEventState,
+  EditEventCommand,
+  CancelEventCommand,
+  EditRegistrationCommand,
+  GenerateWhatsAppTextCommand,
+  Event,
 } from './types';
 
 export class RegistrationDomain {
@@ -412,6 +417,160 @@ export class RegistrationDomain {
       waitlist,
       cancelled,
     };
+  }
+
+  async editEvent(command: EditEventCommand): Promise<Event> {
+    const event = await this.repo.findEventById(command.eventId);
+    if (!event) throw new EventNotFoundError(command.eventId);
+    if (event.status === 'cancelled') throw new OperationNotAllowedError('Cannot edit a cancelled event');
+
+    const updatedEvent: Event = { ...event };
+    if (command.type !== undefined) updatedEvent.type = command.type;
+    if (command.date !== undefined) updatedEvent.date = command.date;
+    if (command.time !== undefined) updatedEvent.time = command.time;
+    if (command.note !== undefined) updatedEvent.note = command.note;
+    if (command.allowWaitlist !== undefined) updatedEvent.allowWaitlist = command.allowWaitlist;
+
+    if (command.capacity !== undefined && command.capacity !== event.capacity) {
+      updatedEvent.capacity = command.capacity;
+      const allRegs = await this.repo.listRegistrationsByEvent(command.eventId);
+      
+      const occupied = allRegs.filter(r => r.status === 'confirmed' || r.status === 'pending_confirmation')
+        .sort((a, b) => a.createdAt.getTime() - b.createdAt.getTime());
+      const waitlist = this.getSortedWaitlist(allRegs);
+      
+      if (command.capacity < event.capacity) {
+        // Reduced capacity
+        if (occupied.length > command.capacity) {
+          const displaced = occupied.slice(command.capacity);
+          const now = new Date();
+          
+          for (let i = 0; i < displaced.length; i++) {
+            displaced[i].status = 'waitlisted';
+            displaced[i].waitlistPosition = i + 1;
+            displaced[i].updatedAt = now;
+          }
+          
+          for (let i = 0; i < waitlist.length; i++) {
+            waitlist[i].waitlistPosition = displaced.length + i + 1;
+            waitlist[i].updatedAt = now;
+          }
+          
+          await this.repo.saveRegistrations([...displaced, ...waitlist]);
+        }
+      } else {
+        // Increased capacity
+        const freeSeats = Math.max(0, command.capacity - occupied.length);
+        const toPromoteCount = Math.min(freeSeats, waitlist.length);
+        
+        if (toPromoteCount > 0) {
+          const promoted = waitlist.slice(0, toPromoteCount);
+          const remaining = waitlist.slice(toPromoteCount);
+          const now = new Date();
+          
+          for (let i = 0; i < promoted.length; i++) {
+            promoted[i].status = 'pending_confirmation';
+            promoted[i].waitlistPosition = undefined;
+            promoted[i].updatedAt = now;
+          }
+          
+          for (let i = 0; i < remaining.length; i++) {
+            remaining[i].waitlistPosition = i + 1;
+            remaining[i].updatedAt = now;
+          }
+          
+          await this.repo.saveRegistrations([...promoted, ...remaining]);
+        }
+      }
+    }
+    
+    await this.repo.saveEvent(updatedEvent);
+    return updatedEvent;
+  }
+
+  async cancelEvent(command: CancelEventCommand): Promise<Event> {
+    const event = await this.repo.findEventById(command.eventId);
+    if (!event) throw new EventNotFoundError(command.eventId);
+    if (event.status === 'cancelled') return event;
+
+    const allRegs = await this.repo.listRegistrationsByEvent(command.eventId);
+    const active = allRegs.filter(r => r.status !== 'cancelled');
+    const now = new Date();
+
+    for (const reg of active) {
+      reg.status = 'cancelled';
+      reg.cancelledBy = 'organizer';
+      reg.waitlistPosition = undefined;
+      reg.updatedAt = now;
+    }
+    
+    if (active.length > 0) {
+      await this.repo.saveRegistrations(active);
+    }
+
+    event.status = 'cancelled';
+    await this.repo.saveEvent(event);
+    return event;
+  }
+
+  async editRegistration(command: EditRegistrationCommand): Promise<Registration> {
+    const reg = await this.repo.findRegistrationById(command.registrationId);
+    if (!reg || reg.eventId !== command.eventId) {
+      throw new RegistrationNotFoundError(command.registrationId);
+    }
+    if (reg.status === 'cancelled') {
+      throw new OperationNotAllowedError('Cannot edit a cancelled registration');
+    }
+
+    if (command.nickname !== undefined) {
+      const clean = command.nickname.trim();
+      if (!clean) throw new InvalidRegistrationDataError('Nickname cannot be empty');
+      reg.nickname = clean;
+    }
+    if (command.lateArrival !== undefined) {
+      reg.lateArrival = command.lateArrival;
+      if (reg.lateArrival) {
+        if (!command.estimatedArrivalTime || !command.estimatedArrivalTime.trim()) {
+          throw new InvalidRegistrationDataError('Estimated arrival time required for late arrival');
+        }
+        reg.estimatedArrivalTime = command.estimatedArrivalTime.trim();
+      } else {
+        reg.estimatedArrivalTime = undefined;
+      }
+    }
+
+    reg.updatedAt = new Date();
+    await this.repo.saveRegistration(reg);
+    return reg;
+  }
+
+  async generateWhatsAppText(command: GenerateWhatsAppTextCommand): Promise<string> {
+    const state = await this.getVisibleEventState(command.eventId);
+    
+    let text = `*Event: ${state.event.slug}*\n`;
+    text += `*Type:* ${state.event.type === 'cash' ? 'Cash Game' : 'Tournament'}\n`;
+    text += `*Date:* ${state.event.date} at ${state.event.time}\n\n`;
+    
+    text += `*Confirmed (${state.confirmed.length}/${state.capacity}):*\n`;
+    state.confirmed.forEach((r, idx) => {
+      text += `${idx + 1}. ${r.nickname}${r.lateArrival ? ` (Late: ${r.estimatedArrivalTime})` : ''}\n`;
+    });
+    
+    if (state.pendingConfirmation.length > 0) {
+      text += `\n*Pending Confirmation:*\n`;
+      state.pendingConfirmation.forEach((r, idx) => {
+        text += `${idx + 1}. ${r.nickname}\n`;
+      });
+    }
+
+    if (state.waitlist.length > 0) {
+      text += `\n*Waitlist:*\n`;
+      state.waitlist.forEach((r) => {
+        text += `${r.waitlistPosition}. ${r.nickname}\n`;
+      });
+    }
+    
+    return text;
   }
 
   private getSortedWaitlist(registrations: Registration[]): Registration[] {
