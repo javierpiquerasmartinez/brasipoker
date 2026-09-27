@@ -19,6 +19,16 @@ export class InMemoryEventRepository implements EventRepository {
     return null;
   }
 
+  async listEventsByOrganizer(organizerId: string): Promise<Event[]> {
+    const list: Event[] = [];
+    for (const ev of this.events.values()) {
+      if (ev.organizerId === organizerId) {
+        list.push({ ...ev });
+      }
+    }
+    return list;
+  }
+
   async saveEvent(event: Event): Promise<void> {
     this.events.set(event.id, { ...event });
   }

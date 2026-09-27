@@ -110,8 +110,19 @@ export interface EditRegistrationCommand {
   estimatedArrivalTime?: string;
 }
 
+export interface CreateEventCommand {
+  organizerId: string;
+  type: EventType;
+  date: string; // YYYY-MM-DD
+  time: string; // HH:mm
+  capacity: number;
+  note?: string;
+  allowWaitlist: boolean;
+}
+
 export interface GenerateWhatsAppTextCommand {
   eventId: string;
+  baseUrl?: string;
 }
 
 

@@ -66,6 +66,18 @@ export class SupabaseEventRepository implements EventRepository {
     return this.mapEvent(data);
   }
 
+  async listEventsByOrganizer(organizerId: string): Promise<Event[]> {
+    const { data, error } = await this.supabase
+      .from('events')
+      .select('*')
+      .eq('organizer_id', organizerId)
+      .order('date', { ascending: false })
+      .order('time', { ascending: false });
+
+    if (error) throw new Error(`Failed to list events: ${error.message}`);
+    return (data || []).map((row) => this.mapEvent(row));
+  }
+
   async saveEvent(event: Event): Promise<void> {
     const { error } = await this.supabase
       .from('events')
