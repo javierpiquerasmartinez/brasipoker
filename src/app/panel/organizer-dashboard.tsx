@@ -315,7 +315,7 @@ export function OrganizerDashboard({
           id="btn-crear-evento"
           type="button"
           onClick={() => setCreateModalOpen(true)}
-          className="inline-flex items-center justify-center gap-2 rounded-xl bg-emerald-600 px-5 py-3 font-semibold text-white shadow-lg shadow-emerald-950/40 transition-all hover:bg-emerald-500 hover:shadow-emerald-900/50 active:scale-95"
+          className="inline-flex items-center justify-center gap-2 rounded-xl bg-emerald-600 px-5 py-3 font-semibold text-white shadow-lg shadow-emerald-950/40 transition-all hover:bg-emerald-500 hover:shadow-emerald-900/50 active:scale-95 cursor-pointer"
         >
           <svg
             className="h-5 w-5"
@@ -348,7 +348,7 @@ export function OrganizerDashboard({
           <button
             type="button"
             onClick={() => setGlobalFeedback(null)}
-            className="ml-4 text-chip/60 hover:text-chip"
+            className="ml-4 text-chip/60 hover:text-chip cursor-pointer"
           >
             ✕
           </button>
@@ -361,7 +361,7 @@ export function OrganizerDashboard({
           id="tab-proximos"
           type="button"
           onClick={() => setActiveTab("upcoming")}
-          className={`relative pb-3 text-sm font-semibold transition-colors sm:text-base ${
+          className={`relative pb-3 text-sm font-semibold transition-colors sm:text-base cursor-pointer ${
             activeTab === "upcoming"
               ? "text-emerald-400"
               : "text-chip/60 hover:text-chip"
@@ -386,7 +386,7 @@ export function OrganizerDashboard({
           id="tab-pasadas"
           type="button"
           onClick={() => setActiveTab("past")}
-          className={`relative ml-8 pb-3 text-sm font-semibold transition-colors sm:text-base ${
+          className={`relative ml-8 pb-3 text-sm font-semibold transition-colors sm:text-base cursor-pointer ${
             activeTab === "past"
               ? "text-emerald-400"
               : "text-chip/60 hover:text-chip"
@@ -533,7 +533,7 @@ export function OrganizerDashboard({
                           [event.id]: !prev[event.id],
                         }))
                       }
-                      className="flex w-full items-center justify-between rounded-xl border border-white/10 bg-white/[0.03] px-3 py-2 text-xs font-semibold text-chip/80 transition-colors hover:bg-white/[0.07] hover:text-chip"
+                      className="flex w-full items-center justify-between rounded-xl border border-white/10 bg-white/[0.03] px-3 py-2 text-xs font-semibold text-chip/80 transition-colors hover:bg-white/[0.07] hover:text-chip cursor-pointer"
                     >
                       <span className="flex items-center gap-1.5">
                         <span>👥 Roster de Jugadores</span>
@@ -613,7 +613,7 @@ export function OrganizerDashboard({
                         {(event.roster?.waitlist?.length ?? 0) > 0 && (
                           <div className="border-t border-white/10 pt-2">
                             <p className="font-bold text-amber-400 uppercase tracking-wider text-[10px]">
-                              Lista de Espera ({event.roster?.waitlist?.length})
+                               Lista de Espera ({event.roster?.waitlist?.length})
                             </p>
                             <ul className="mt-1.5 divide-y divide-white/5">
                               {event.roster?.waitlist?.map((p) => (
@@ -665,7 +665,7 @@ export function OrganizerDashboard({
                         <div className="pt-1 text-right">
                           <Link
                             href={`/panel/eventos/${event.id}`}
-                            className="text-[11px] font-bold text-emerald-400 hover:text-emerald-300 hover:underline"
+                            className="text-[11px] font-bold text-emerald-400 hover:text-emerald-300 hover:underline cursor-pointer"
                           >
                             Gestionar en vivo ➔
                           </Link>
@@ -680,7 +680,7 @@ export function OrganizerDashboard({
                   {/* Primary Action: Monitor Live */}
                   <Link
                     href={`/panel/eventos/${event.id}`}
-                    className="inline-flex items-center justify-center gap-2 rounded-xl border border-emerald-500/40 bg-felt-950/90 px-4 py-2.5 text-xs font-bold text-emerald-300 shadow transition-all hover:border-emerald-400 hover:bg-emerald-950/60"
+                    className="inline-flex items-center justify-center gap-2 rounded-xl border border-emerald-500/40 bg-felt-950/90 px-4 py-2.5 text-xs font-bold text-emerald-300 shadow transition-all hover:border-emerald-400 hover:bg-emerald-950/60 cursor-pointer"
                   >
                     <span className="h-2 w-2 rounded-full bg-emerald-400 animate-pulse" />
                     <span>Monitorizar en vivo (Roster)</span>
@@ -691,7 +691,7 @@ export function OrganizerDashboard({
                     <button
                       type="button"
                       onClick={() => handleOpenShare(event)}
-                      className="flex-1 inline-flex items-center justify-center gap-1.5 rounded-xl bg-emerald-600/90 px-3.5 py-2 text-xs font-semibold text-white shadow transition-colors hover:bg-emerald-500"
+                      className="flex-1 inline-flex items-center justify-center gap-1.5 rounded-xl bg-emerald-600/90 px-3.5 py-2 text-xs font-semibold text-white shadow transition-colors hover:bg-emerald-500 cursor-pointer"
                     >
                       <span>💬</span>
                       <span>Difundir (WhatsApp)</span>
@@ -700,7 +700,7 @@ export function OrganizerDashboard({
                     <Link
                       href={`/p/${event.slug}`}
                       target="_blank"
-                      className="inline-flex items-center justify-center rounded-xl border border-white/15 bg-white/5 px-3 py-2 text-xs font-semibold text-chip hover:bg-white/10"
+                      className="inline-flex items-center justify-center rounded-xl border border-white/15 bg-white/5 px-3 py-2 text-xs font-semibold text-chip hover:bg-white/10 cursor-pointer"
                       title="Ver enlace público"
                     >
                       🔗
@@ -713,7 +713,7 @@ export function OrganizerDashboard({
                       <button
                         type="button"
                         onClick={() => handleOpenEdit(event)}
-                        className="rounded-lg px-2.5 py-1.5 font-medium text-chip/70 hover:bg-white/5 hover:text-chip"
+                        className="rounded-lg px-2.5 py-1.5 font-medium text-chip/70 hover:bg-white/5 hover:text-chip cursor-pointer"
                       >
                         ✏️ Editar
                       </button>
@@ -721,7 +721,7 @@ export function OrganizerDashboard({
                       <button
                         type="button"
                         onClick={() => setCancelEventData(event)}
-                        className="rounded-lg px-2.5 py-1.5 font-medium text-red-400/80 hover:bg-red-950/40 hover:text-red-300"
+                        className="rounded-lg px-2.5 py-1.5 font-medium text-red-400/80 hover:bg-red-950/40 hover:text-red-300 cursor-pointer"
                       >
                         🚫 Cancelar
                       </button>
@@ -745,7 +745,7 @@ export function OrganizerDashboard({
               <button
                 type="button"
                 onClick={() => setCreateModalOpen(false)}
-                className="rounded-lg p-1.5 text-chip/60 hover:bg-white/10 hover:text-chip"
+                className="rounded-lg p-1.5 text-chip/60 hover:bg-white/10 hover:text-chip cursor-pointer"
               >
                 ✕
               </button>
@@ -774,7 +774,7 @@ export function OrganizerDashboard({
                   <button
                     type="button"
                     onClick={() => setNewType("cash")}
-                    className={`flex items-center justify-center gap-2 rounded-xl border p-3 font-semibold transition-all ${
+                    className={`flex items-center justify-center gap-2 rounded-xl border p-3 font-semibold transition-all cursor-pointer ${
                       newType === "cash"
                         ? "border-emerald-500 bg-emerald-500/20 text-emerald-300"
                         : "border-white/10 bg-white/5 text-chip/70 hover:bg-white/10"
@@ -785,7 +785,7 @@ export function OrganizerDashboard({
                   <button
                     type="button"
                     onClick={() => setNewType("tournament")}
-                    className={`flex items-center justify-center gap-2 rounded-xl border p-3 font-semibold transition-all ${
+                    className={`flex items-center justify-center gap-2 rounded-xl border p-3 font-semibold transition-all cursor-pointer ${
                       newType === "tournament"
                         ? "border-amber-500 bg-amber-500/20 text-amber-300"
                         : "border-white/10 bg-white/5 text-chip/70 hover:bg-white/10"
@@ -871,7 +871,10 @@ export function OrganizerDashboard({
               </div>
 
               {/* Toggle Lista de Espera */}
-              <div className="flex items-center justify-between rounded-xl border border-white/10 bg-white/5 p-3.5">
+              <label
+                htmlFor="create-waitlist-toggle"
+                className="flex items-center justify-between rounded-xl border border-white/10 bg-white/5 p-3.5 cursor-pointer hover:bg-white/[0.08] transition-colors"
+              >
                 <div>
                   <span className="block font-semibold text-chip">
                     Lista de espera
@@ -885,23 +888,23 @@ export function OrganizerDashboard({
                   type="checkbox"
                   checked={newAllowWaitlist}
                   onChange={(e) => setNewAllowWaitlist(e.target.checked)}
-                  className="h-5 w-5 rounded border-white/20 bg-felt-950 text-emerald-500 accent-emerald-500"
+                  className="h-5 w-5 rounded border-white/20 bg-felt-950 text-emerald-500 accent-emerald-500 cursor-pointer"
                 />
-              </div>
+              </label>
 
               {/* Buttons */}
               <div className="mt-4 flex items-center justify-end gap-3 pt-2">
                 <button
                   type="button"
                   onClick={() => setCreateModalOpen(false)}
-                  className="rounded-xl px-4 py-2.5 text-sm font-semibold text-chip/70 hover:bg-white/5"
+                  className="rounded-xl px-4 py-2.5 text-sm font-semibold text-chip/70 hover:bg-white/5 cursor-pointer"
                 >
                   Cancelar
                 </button>
                 <button
                   type="submit"
                   disabled={isPending}
-                  className="inline-flex items-center gap-2 rounded-xl bg-emerald-600 px-5 py-2.5 font-semibold text-white shadow-md hover:bg-emerald-500 disabled:opacity-50"
+                  className="inline-flex items-center gap-2 rounded-xl bg-emerald-600 px-5 py-2.5 font-semibold text-white shadow-md hover:bg-emerald-500 disabled:opacity-50 cursor-pointer"
                 >
                   {isPending ? "Creando..." : "Crear Convocatoria"}
                 </button>
@@ -929,7 +932,7 @@ export function OrganizerDashboard({
               <button
                 type="button"
                 onClick={() => setShareEventData(null)}
-                className="rounded-lg p-1.5 text-chip/60 hover:bg-white/10 hover:text-chip"
+                className="rounded-lg p-1.5 text-chip/60 hover:bg-white/10 hover:text-chip cursor-pointer"
               >
                 ✕
               </button>
@@ -948,7 +951,7 @@ export function OrganizerDashboard({
                 <button
                   type="button"
                   onClick={() => handleCopyLink(shareEventData.slug)}
-                  className="shrink-0 rounded-lg bg-white/10 px-3 py-1.5 text-xs font-semibold text-chip transition-colors hover:bg-white/20"
+                  className="shrink-0 rounded-lg bg-white/10 px-3 py-1.5 text-xs font-semibold text-chip transition-colors hover:bg-white/20 cursor-pointer"
                 >
                   {copiedLink ? "¡Copiado! ✓" : "Copiar"}
                 </button>
@@ -982,7 +985,7 @@ export function OrganizerDashboard({
                 id="btn-copiar-mensaje"
                 type="button"
                 onClick={handleCopyMessage}
-                className="flex-1 inline-flex items-center justify-center gap-2 rounded-xl bg-white/15 px-4 py-3 text-sm font-semibold text-chip transition-all hover:bg-white/20 active:scale-95"
+                className="flex-1 inline-flex items-center justify-center gap-2 rounded-xl bg-white/15 px-4 py-3 text-sm font-semibold text-chip transition-all hover:bg-white/20 active:scale-95 cursor-pointer"
               >
                 {copiedMessage ? "¡Mensaje copiado! ✓" : "📋 Copiar Mensaje"}
               </button>
@@ -994,7 +997,7 @@ export function OrganizerDashboard({
                 )}`}
                 target="_blank"
                 rel="noreferrer"
-                className="flex-1 inline-flex items-center justify-center gap-2 rounded-xl bg-emerald-600 px-4 py-3 text-sm font-semibold text-white shadow-md transition-all hover:bg-emerald-500 active:scale-95"
+                className="flex-1 inline-flex items-center justify-center gap-2 rounded-xl bg-emerald-600 px-4 py-3 text-sm font-semibold text-white shadow-md transition-all hover:bg-emerald-500 active:scale-95 cursor-pointer"
               >
                 <span>💬</span>
                 <span>Abrir WhatsApp</span>
@@ -1022,7 +1025,7 @@ export function OrganizerDashboard({
               <button
                 type="button"
                 onClick={() => setEditEventData(null)}
-                className="rounded-lg p-1.5 text-chip/60 hover:bg-white/10 hover:text-chip"
+                className="rounded-lg p-1.5 text-chip/60 hover:bg-white/10 hover:text-chip cursor-pointer"
               >
                 ✕
               </button>
@@ -1121,7 +1124,10 @@ export function OrganizerDashboard({
               </div>
 
               {/* Toggle Lista de Espera */}
-              <div className="flex items-center justify-between rounded-xl border border-white/10 bg-white/5 p-3.5">
+              <label
+                htmlFor="edit-waitlist-toggle"
+                className="flex items-center justify-between rounded-xl border border-white/10 bg-white/5 p-3.5 cursor-pointer hover:bg-white/[0.08] transition-colors"
+              >
                 <div>
                   <span className="block font-semibold text-chip">
                     Lista de espera
@@ -1135,23 +1141,23 @@ export function OrganizerDashboard({
                   type="checkbox"
                   checked={editAllowWaitlist}
                   onChange={(e) => setEditAllowWaitlist(e.target.checked)}
-                  className="h-5 w-5 rounded border-white/20 bg-felt-950 text-emerald-500 accent-emerald-500"
+                  className="h-5 w-5 rounded border-white/20 bg-felt-950 text-emerald-500 accent-emerald-500 cursor-pointer"
                 />
-              </div>
+              </label>
 
               {/* Buttons */}
               <div className="mt-4 flex items-center justify-end gap-3 pt-2">
                 <button
                   type="button"
                   onClick={() => setEditEventData(null)}
-                  className="rounded-xl px-4 py-2.5 text-sm font-semibold text-chip/70 hover:bg-white/5"
+                  className="rounded-xl px-4 py-2.5 text-sm font-semibold text-chip/70 hover:bg-white/5 cursor-pointer"
                 >
                   Cancelar
                 </button>
                 <button
                   type="submit"
                   disabled={isPending}
-                  className="inline-flex items-center gap-2 rounded-xl bg-emerald-600 px-5 py-2.5 font-semibold text-white shadow-md hover:bg-emerald-500 disabled:opacity-50"
+                  className="inline-flex items-center gap-2 rounded-xl bg-emerald-600 px-5 py-2.5 font-semibold text-white shadow-md hover:bg-emerald-500 disabled:opacity-50 cursor-pointer"
                 >
                   {isPending ? "Guardando..." : "Guardar Cambios"}
                 </button>
@@ -1197,7 +1203,7 @@ export function OrganizerDashboard({
               <button
                 type="button"
                 onClick={() => setCancelEventData(null)}
-                className="rounded-xl px-4 py-2.5 text-sm font-semibold text-chip/70 hover:bg-white/5"
+                className="rounded-xl px-4 py-2.5 text-sm font-semibold text-chip/70 hover:bg-white/5 cursor-pointer"
               >
                 Volver
               </button>
@@ -1206,7 +1212,7 @@ export function OrganizerDashboard({
                 type="button"
                 disabled={isPending}
                 onClick={handleCancelSubmit}
-                className="inline-flex items-center gap-2 rounded-xl bg-red-600 px-5 py-2.5 text-sm font-semibold text-white shadow-md hover:bg-red-500 disabled:opacity-50"
+                className="inline-flex items-center gap-2 rounded-xl bg-red-600 px-5 py-2.5 text-sm font-semibold text-white shadow-md hover:bg-red-500 disabled:opacity-50 cursor-pointer"
               >
                 {isPending ? "Cancelando..." : "Sí, Cancelar Evento"}
               </button>

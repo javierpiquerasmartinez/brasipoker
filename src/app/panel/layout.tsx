@@ -37,7 +37,7 @@ export default async function PanelLayout({
             <form action={signOutAction}>
               <button
                 type="submit"
-                className="rounded-lg border border-white/15 px-3 py-1.5 text-chip/80 transition-colors hover:bg-white/10"
+                className="rounded-lg border border-white/15 px-3 py-1.5 text-chip/80 transition-colors hover:bg-white/10 cursor-pointer"
               >
                 Salir
               </button>

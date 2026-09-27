@@ -392,7 +392,7 @@ export function PublicPlayerView({ initialData }: PublicPlayerViewProps) {
                   localStorage.removeItem(`brasipoker_phone_${initialData.slug}`);
                 } catch {}
               }}
-              className="text-xs text-chip/60 hover:text-chip underline underline-offset-2"
+              className="text-xs text-chip/60 hover:text-chip underline underline-offset-2 cursor-pointer"
             >
               Cambiar teléfono
             </button>
@@ -445,7 +445,7 @@ export function PublicPlayerView({ initialData }: PublicPlayerViewProps) {
                   type="button"
                   id="btn-cancel-my-slot"
                   onClick={() => setConfirmCancelOpen(true)}
-                  className="w-full rounded-xl border border-red-500/30 bg-red-950/40 py-2.5 text-sm font-semibold text-red-300 hover:bg-red-900/40 transition-colors"
+                  className="w-full rounded-xl border border-red-500/30 bg-red-950/40 py-2.5 text-sm font-semibold text-red-300 hover:bg-red-900/40 transition-colors cursor-pointer"
                 >
                   Liberar / Cancelar mi plaza
                 </button>
@@ -462,7 +462,7 @@ export function PublicPlayerView({ initialData }: PublicPlayerViewProps) {
                       type="button"
                       disabled={isCancelling}
                       onClick={handleCancelRegistration}
-                      className="flex-1 rounded-lg bg-red-600 py-2 text-xs font-bold text-white hover:bg-red-500 disabled:opacity-50"
+                      className="flex-1 rounded-lg bg-red-600 py-2 text-xs font-bold text-white hover:bg-red-500 disabled:opacity-50 cursor-pointer"
                     >
                       {isCancelling ? "Cancelando..." : "Sí, cancelar mi plaza"}
                     </button>
@@ -470,7 +470,7 @@ export function PublicPlayerView({ initialData }: PublicPlayerViewProps) {
                       type="button"
                       disabled={isCancelling}
                       onClick={() => setConfirmCancelOpen(false)}
-                      className="flex-1 rounded-lg border border-white/20 bg-felt-800 py-2 text-xs font-semibold text-chip hover:bg-felt-700"
+                      className="flex-1 rounded-lg border border-white/20 bg-felt-800 py-2 text-xs font-semibold text-chip hover:bg-felt-700 cursor-pointer"
                     >
                       No, mantener
                     </button>
@@ -490,7 +490,7 @@ export function PublicPlayerView({ initialData }: PublicPlayerViewProps) {
                 type="button"
                 id="btn-toggle-lookup"
                 onClick={() => setShowManagePhoneModal(!showManagePhoneModal)}
-                className="text-xs text-emerald-400 hover:underline"
+                className="text-xs text-emerald-400 hover:underline cursor-pointer"
               >
                 {showManagePhoneModal ? "Volver al formulario" : "¿Ya te apuntaste? Gestionar plaza"}
               </button>
@@ -519,7 +519,7 @@ export function PublicPlayerView({ initialData }: PublicPlayerViewProps) {
                 <button
                   type="submit"
                   disabled={isCheckingMyReg}
-                  className="rounded-xl bg-emerald-600 py-2.5 text-sm font-bold text-white hover:bg-emerald-500 disabled:opacity-50 transition-colors"
+                  className="rounded-xl bg-emerald-600 py-2.5 text-sm font-bold text-white hover:bg-emerald-500 disabled:opacity-50 transition-colors cursor-pointer"
                 >
                   {isCheckingMyReg ? "Buscando..." : "Localizar mi inscripción"}
                 </button>
@@ -569,7 +569,7 @@ export function PublicPlayerView({ initialData }: PublicPlayerViewProps) {
                       type="button"
                       id="btn-arrival-start"
                       onClick={() => setLateArrival(false)}
-                      className={`rounded-lg py-2 text-xs font-semibold transition-all ${
+                      className={`rounded-lg py-2 text-xs font-semibold transition-all cursor-pointer ${
                         !lateArrival
                           ? "bg-emerald-600 text-white shadow"
                           : "bg-felt-900 text-chip/70 hover:bg-felt-800"
@@ -581,7 +581,7 @@ export function PublicPlayerView({ initialData }: PublicPlayerViewProps) {
                       type="button"
                       id="btn-arrival-late"
                       onClick={() => setLateArrival(true)}
-                      className={`rounded-lg py-2 text-xs font-semibold transition-all ${
+                      className={`rounded-lg py-2 text-xs font-semibold transition-all cursor-pointer ${
                         lateArrival
                           ? "bg-emerald-600 text-white shadow"
                           : "bg-felt-900 text-chip/70 hover:bg-felt-800"
@@ -612,7 +612,7 @@ export function PublicPlayerView({ initialData }: PublicPlayerViewProps) {
                   type="submit"
                   id="btn-submit-register"
                   disabled={isSubmitting}
-                  className="mt-1 w-full rounded-xl bg-emerald-600 py-3 text-sm font-bold text-white shadow-lg transition-all hover:bg-emerald-500 active:scale-[0.99] disabled:opacity-50"
+                  className="mt-1 w-full rounded-xl bg-emerald-600 py-3 text-sm font-bold text-white shadow-lg transition-all hover:bg-emerald-500 active:scale-[0.99] disabled:opacity-50 cursor-pointer"
                 >
                   {isSubmitting ? (
                     "Apuntando..."
